@@ -5,8 +5,8 @@
 Вёрстка кодом c UIKit.
 
 ## Команда разработки
-[kit10000000](https://github.com/kit10000000)
-[dpogonia](https://github.com/dpogonia)
+- [kit10000000](https://github.com/kit10000000)
+- [dpogonia](https://github.com/dpogonia)
 
 ## Доска проекта
 https://github.com/users/kit10000000/projects/1
