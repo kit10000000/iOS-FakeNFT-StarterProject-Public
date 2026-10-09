@@ -1,5 +1,16 @@
 # ТЗ мобильного приложения FakeNFT
 
+## Техническая информация
+Архитектура MVP.
+Вёрстка кодом c UIKit.
+
+## Команда разработки
+[kit10000000](https://github.com/kit10000000)
+[dpogonia](https://github.com/dpogonia)
+
+## Доска проекта
+https://github.com/users/kit10000000/projects/1
+
 ## Ссылки
 
 [Дизайн Figma](https://www.figma.com/design/Uz5G39wRRCr2mRE4SbnNla/FakeNFT--YP-)
