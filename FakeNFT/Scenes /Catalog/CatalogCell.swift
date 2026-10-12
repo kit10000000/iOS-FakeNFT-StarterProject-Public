@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class CatalogCell: UITableViewCell, ReuseIdentifying {
     
@@ -24,12 +25,14 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        coverImageView.kf.cancelDownloadTask()
         coverImageView.image = nil
         nameLabel.text = nil
         countLabel.text = nil
     }
     
     func configure(with collection: NftCollection) {
+        coverImageView.kf.setImage(with: collection.cover)
         nameLabel.text = collection.name
         countLabel.text = "(\(collection.nfts.count))"
     }
