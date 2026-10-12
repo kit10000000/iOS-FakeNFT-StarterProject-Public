@@ -11,7 +11,6 @@ final class CartViewController: UIViewController {
 
     private let servicesAssembly: ServicesAssembly
 
-
     init(servicesAssembly: ServicesAssembly) {
         self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
@@ -23,7 +22,10 @@ final class CartViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-
+        servicesAssembly.orderService.getOrder(id: "1") { result in
+            #if DEBUG
+            print(result)
+            #endif
+        }
     }
 }

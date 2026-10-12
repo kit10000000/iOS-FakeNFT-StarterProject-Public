@@ -17,4 +17,24 @@ final class ServicesAssembly {
             storage: nftStorage
         )
     }
+
+    var orderService: OrderService {
+        #if DEBUG
+            OrderServiceMockImpl(result: .success(
+                Order(
+                    id: "df432926-0dda-43f6-8da9-bae96de34cf9",
+                    nfts: [
+                        "c14cf3bc-7470-4eec-8a42-5eaa65f4053c",
+                        "d6a02bd1-1255-46cd-815b-656174c1d9c0",
+                        "d30d016c-92a9-48c2-8086-d376d5cbe257",
+                        "f991a551-3046-4bd6-9ab8-b4f8d6561df7"
+                    ]
+                )
+            ))
+        #else
+            OrderServiceImpl(
+                networkClient: networkClient
+            )
+        #endif
+    }
 }
