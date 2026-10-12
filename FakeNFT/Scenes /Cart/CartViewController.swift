@@ -7,12 +7,17 @@
 
 import UIKit
 
+protocol CartViewControllerProtocol: AnyObject, ErrorView, LoadingView {
+}
+
 final class CartViewController: UIViewController {
 
-    private let servicesAssembly: ServicesAssembly
+    private let presenter: CartPresenterProtocol
 
-    init(servicesAssembly: ServicesAssembly) {
-        self.servicesAssembly = servicesAssembly
+    internal lazy var activityIndicator = UIActivityIndicatorView()
+
+    init(presenter: CartPresenterProtocol) {
+        self.presenter = presenter
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -22,10 +27,10 @@ final class CartViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        servicesAssembly.orderService.getOrder(id: "1") { result in
-            #if DEBUG
-            print(result)
-            #endif
-        }
+        presenter.viewDidLoad()
     }
+}
+
+extension CartViewController: CartViewControllerProtocol {
+
 }
