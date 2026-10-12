@@ -39,17 +39,17 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
     
     private func setupView() {
         selectionStyle = .none
-        backgroundColor = .background
+        backgroundColor = .ypWhiteUniversal
         
         coverImageView.contentMode = .scaleAspectFill
         coverImageView.clipsToBounds = true
         coverImageView.layer.cornerRadius = 12
-        coverImageView.backgroundColor = .segmentInactive
+        coverImageView.backgroundColor = .ypLightGrey
         
         nameLabel.font = .bodyBold
         countLabel.font = .bodyBold
-        nameLabel.textColor = .closeButton
-        countLabel.textColor = .closeButton
+        nameLabel.textColor = .ypBlack
+        countLabel.textColor = .ypBlack
         
         let titleRow = UIStackView(arrangedSubviews: [nameLabel, countLabel])
         titleRow.axis = .horizontal

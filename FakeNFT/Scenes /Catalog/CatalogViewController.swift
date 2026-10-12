@@ -25,10 +25,10 @@ final class CatalogViewController: UIViewController, CatalogView {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .systemBackground
+        view.backgroundColor = .ypWhite
         tableView.dataSource = self
         tableView.register(CatalogCell.self)
-        tableView.backgroundColor = .systemBackground
+        tableView.backgroundColor = .ypWhite
         view.addSubview(tableView)
         tableView.constraintEdges(to: view)
         
