@@ -15,10 +15,10 @@ final class TabBarController: UITabBarController {
 
         let catalogController = CatalogAssembly().build()
         catalogController.title = NSLocalizedString("Tab.catalog", comment: "")
-        let catalogNavigation = UINavigationController(rootViewController: catalogController)
-        catalogNavigation.tabBarItem = catalogTabBarItem
+        let catalogVC = UINavigationController(rootViewController: catalogController)
+        catalogVC.tabBarItem = catalogTabBarItem
 
-        viewControllers = [catalogNavigation]
+        viewControllers = [catalogVC]
 
         view.backgroundColor = .systemBackground
     }
