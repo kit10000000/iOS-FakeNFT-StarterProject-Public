@@ -10,7 +10,10 @@ import Foundation
 // MARK: - Protocol
 
 protocol CartPresenterProtocol {
+    var nfts: [String] { get }
+    var total: Decimal? { get }
     func viewDidLoad()
+    func didTapPay()
 }
 
 // MARK: - State
@@ -24,9 +27,17 @@ final class CartPresenterImpl: CartPresenterProtocol {
     // MARK: - Properties
 
     weak var view: CartViewControllerProtocol?
+    var nfts: [String] {
+        self.order?.nfts ?? []
+    }
+
+    var total: Decimal? {
+        0
+    }
 
     // MARK: - Private Properties
 
+    private var order: Order?
     private let service: OrderService
     private var state = CartState.initial {
         didSet {
@@ -46,6 +57,10 @@ final class CartPresenterImpl: CartPresenterProtocol {
         state = .loading
     }
 
+    func didTapPay() {
+        print("lets pay")
+    }
+
     // MARK: - Private Methods
 
     private func stateDidChanged() {
@@ -55,11 +70,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
         case .loading:
             view?.showLoading()
             loadOrder()
-        case .data(let order):
+        case .data(_):
             view?.hideLoading()
-            #if DEBUG
-            print(order)
-            #endif
+            view?.display()
         case .failed(let error):
             let errorModel = makeErrorModel(error)
             view?.hideLoading()
@@ -71,6 +84,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
         service.getOrder(id: "1") { [weak self] result in
             switch result {
             case .success(let order):
+                self?.order = order
                 self?.state = .data(order)
             case .failure(let error):
                 self?.state = .failed(error)
