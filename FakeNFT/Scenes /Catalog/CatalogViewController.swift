@@ -27,6 +27,7 @@ final class CatalogViewController: UIViewController, CatalogView {
         
         view.backgroundColor = .systemBackground
         tableView.dataSource = self
+        tableView.register(CatalogCell.self)
         tableView.backgroundColor = .systemBackground
         view.addSubview(tableView)
         tableView.constraintEdges(to: view)
@@ -46,6 +47,9 @@ extension CatalogViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            UITableViewCell()
+        let cell: CatalogCell = tableView.dequeueReusableCell()
+        cell.configure(with: collections[indexPath.row])
+        
+        return cell
     }
 }
