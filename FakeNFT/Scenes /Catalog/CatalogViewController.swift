@@ -28,6 +28,8 @@ final class CatalogViewController: UIViewController, CatalogView {
         view.backgroundColor = .ypWhite
         tableView.dataSource = self
         tableView.register(CatalogCell.self)
+        tableView.rowHeight = UITableView.automaticDimension
+        tableView.estimatedRowHeight = 187
         tableView.backgroundColor = .ypWhite
         view.addSubview(tableView)
         tableView.constraintEdges(to: view)
