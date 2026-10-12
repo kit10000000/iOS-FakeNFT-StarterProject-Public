@@ -113,6 +113,7 @@
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		78DAF0FA307C247300925586 /* Cart */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Cart; sourceTree = "<group>"; };
+		78DAF1E1307CBB6900925586 /* Cart */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Cart; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -293,6 +294,7 @@
 		3F6806C929CBBCAF00B4F915 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				78DAF1E1307CBB6900925586 /* Cart */,
 				3F6806D829CC979D00B4F915 /* Network */,
 			);
 			path = Models;
@@ -383,6 +385,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				78DAF0FA307C247300925586 /* Cart */,
+				78DAF1E1307CBB6900925586 /* Cart */,
 			);
 			name = FakeNFT;
 			packageProductDependencies = (
