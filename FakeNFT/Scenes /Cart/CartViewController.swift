@@ -33,10 +33,11 @@ final class CartViewController: UIViewController {
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
         tableView.isScrollEnabled = true
-        tableView.rowHeight = 75
+        tableView.rowHeight = 140
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(CartViewCell.self, forCellReuseIdentifier: CartViewCell.reuseIdentifier)
         tableView.delegate = self
         tableView.dataSource = self
         return tableView
@@ -172,10 +173,10 @@ extension CartViewController: UITableViewDataSource {
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
-        var content = cell.defaultContentConfiguration()
-        content.text = presenter?.nfts[indexPath.row]
-        cell.contentConfiguration = content
-        return cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: CartViewCell.reuseIdentifier, for: indexPath)
+        guard let cartViewCell = cell as? CartViewCell else {
+            return UITableViewCell()
+        }
+        return cartViewCell
     }
 }
