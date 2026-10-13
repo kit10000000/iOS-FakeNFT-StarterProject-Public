@@ -39,6 +39,7 @@ final class CollectionViewController: UIViewController, CollectionView {
     
     func showCollection(_ collection: NftCollection) {
         self.collection = collection
+        collectionView.reloadData()
     }
 }
 
