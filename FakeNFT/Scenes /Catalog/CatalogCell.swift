@@ -43,7 +43,7 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         
         coverImageView.contentMode = .scaleAspectFill
         coverImageView.clipsToBounds = true
-        coverImageView.layer.cornerRadius = 12
+        coverImageView.layer.cornerRadius = 8
         coverImageView.backgroundColor = .ypLightGrey
         
         nameLabel.font = .bodyBold
