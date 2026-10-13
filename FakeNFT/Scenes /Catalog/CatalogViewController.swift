@@ -27,6 +27,7 @@ final class CatalogViewController: UIViewController, CatalogView {
         
         view.backgroundColor = .ypWhite
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(CatalogCell.self)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 187
@@ -41,6 +42,12 @@ final class CatalogViewController: UIViewController, CatalogView {
         self.collections = collections
         tableView.reloadData()
     }
+    
+    func openCollection(_ collection: NftCollection) {
+        let viewController = CollectionAssembly().build(with: collection)
+        viewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(viewController, animated: true)
+    }
 }
 
 extension CatalogViewController: UITableViewDataSource {
@@ -53,5 +60,12 @@ extension CatalogViewController: UITableViewDataSource {
         cell.configure(with: collections[indexPath.row])
         
         return cell
+    }
+}
+
+extension CatalogViewController: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        presenter.didSelectCollection(at: indexPath.row)
     }
 }
