@@ -20,11 +20,7 @@ final class CollectionViewController: UIViewController, CollectionView {
         collectionView.backgroundColor = .ypWhite
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(
-            CollectionHeader.self,
-            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
-            withReuseIdentifier: CollectionHeader.reuseIdentifier
-        )
+        collectionView.register(CollectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CollectionHeader.reuseIdentifier)
         return collectionView
     }()
     
@@ -58,7 +54,11 @@ final class CollectionViewController: UIViewController, CollectionView {
         collectionView.reloadData()
     }
     
-    
+    func openAuthorWebsite(_ url: URL) {
+        let webViewController = AuthorWebViewController(url: url)
+        webViewController.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(webViewController, animated: true)
+    }
 }
 
 extension CollectionViewController: UICollectionViewDataSource {
@@ -89,6 +89,9 @@ extension CollectionViewController: UICollectionViewDataSource {
         }
         if let collection {
             header.configure(with: collection)
+        }
+        header.onAuthorTap = { [weak self] in
+            self?.presenter.didTapAuthor()
         }
         return header
     }

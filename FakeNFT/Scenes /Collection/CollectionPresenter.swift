@@ -9,6 +9,7 @@ import Foundation
 
 protocol CollectionView: AnyObject {
     func showCollection(_ collection: NftCollection)
+    func openAuthorWebsite(_ url: URL)
 }
 
 final class CollectionPresenter {
@@ -22,5 +23,11 @@ final class CollectionPresenter {
     
     func viewDidLoad() {
         view?.showCollection(collection)
+    }
+    
+    func didTapAuthor() {
+        guard let url = URL(string: collection.author) else { return }
+        guard let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" else { return }
+        view?.openAuthorWebsite(url)
     }
 }

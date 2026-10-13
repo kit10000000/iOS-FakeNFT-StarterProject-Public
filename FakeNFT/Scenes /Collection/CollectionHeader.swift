@@ -16,6 +16,7 @@ final class CollectionHeader: UICollectionReusableView {
     private let nameLabel = UILabel()
     private let authorCaptionLabel = UILabel()
     private let authorButton = UIButton(type: .system)
+    var onAuthorTap: (() -> Void)?
     private let descriptionLabel = UILabel()
 
     override init(frame: CGRect) {
@@ -34,6 +35,7 @@ final class CollectionHeader: UICollectionReusableView {
         nameLabel.text = nil
         authorButton.setTitle(nil, for: .normal)
         descriptionLabel.text = nil
+        onAuthorTap = nil
     }
 
     func configure(with collection: NftCollection) {
@@ -41,6 +43,10 @@ final class CollectionHeader: UICollectionReusableView {
         nameLabel.text = collection.name
         authorButton.setTitle(collection.author, for: .normal)
         descriptionLabel.text = collection.description
+    }
+    
+    @objc private func authorButtonTapped() {
+        onAuthorTap?()
     }
 
     private func setupView() {
@@ -61,6 +67,7 @@ final class CollectionHeader: UICollectionReusableView {
 
         authorButton.titleLabel?.font = .bodyRegular
         authorButton.setTitleColor(.ypBlueUniversal, for: .normal)
+        authorButton.addTarget(self, action: #selector(authorButtonTapped), for: .touchUpInside)
         authorButton.contentHorizontalAlignment = .leading
 
         descriptionLabel.font = .bodyRegular
