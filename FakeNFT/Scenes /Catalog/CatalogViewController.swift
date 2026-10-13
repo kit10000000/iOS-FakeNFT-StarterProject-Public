@@ -10,11 +10,13 @@ import UIKit
 final class CatalogViewController: UIViewController, CatalogView {
     
     private let presenter: CatalogPresenter
+    private let servicesAssembly: ServicesAssembly
     private let tableView = UITableView()
     private var collections: [NftCollection] = []
     
-    init(presenter: CatalogPresenter) {
+    init(presenter: CatalogPresenter, servicesAssembly: ServicesAssembly) {
         self.presenter = presenter
+        self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -44,7 +46,7 @@ final class CatalogViewController: UIViewController, CatalogView {
     }
     
     func openCollection(_ collection: NftCollection) {
-        let viewController = CollectionAssembly().build(with: collection)
+        let viewController = CollectionAssembly(servicesAssembly: servicesAssembly).build(with: collection)
         viewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(viewController, animated: true)
     }

@@ -10,6 +10,7 @@ import UIKit
 final class CollectionViewController: UIViewController, CollectionView {
     
     private let presenter: CollectionPresenter
+    private let servicesAssembly: ServicesAssembly
     private var collection: NftCollection?
     private let sizingHeader = CollectionHeader(frame: .zero)
     private var laidOutWidth: CGFloat = 0
@@ -24,8 +25,9 @@ final class CollectionViewController: UIViewController, CollectionView {
         return collectionView
     }()
     
-    init(presenter: CollectionPresenter) {
+    init(presenter: CollectionPresenter, servicesAssembly: ServicesAssembly) {
         self.presenter = presenter
+        self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -59,6 +61,13 @@ final class CollectionViewController: UIViewController, CollectionView {
         webViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(webViewController, animated: true)
     }
+    
+    func openNft(with id: String) {
+        let assembly = NftDetailAssembly(servicesAssembler: servicesAssembly)
+        let input = NftDetailInput(id: id)
+        let nftViewController = assembly.build(with: input)
+        present(nftViewController, animated: true)
+    }
 }
 
 extension CollectionViewController: UICollectionViewDataSource {
@@ -67,7 +76,7 @@ extension CollectionViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        0
+        collection?.nfts.count ?? 0
     }
     
     func collectionView(
@@ -153,6 +162,13 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
         let itemWidth = floor((width - inset * 2 - spacing * (columns - 1)) / columns)
         let itemHeight = itemWidth + 92
         return CGSize(width: itemWidth, height: itemHeight)
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        presenter.didSelectNft(at: indexPath.item)
     }
 }
 
