@@ -113,5 +113,43 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
         ).height
         return CGSize(width: width, height: ceil(height))
     }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
+        UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        9.5
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
+        0
+    }
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
+        let columns: CGFloat = 3
+        let inset: CGFloat = 16
+        let spacing: CGFloat = 9.5
+        let width = collectionView.bounds.width
+        let itemWidth = floor((width - inset * 2 - spacing * (columns - 1)) / columns)
+        let itemHeight = itemWidth + 92
+        return CGSize(width: itemWidth, height: itemHeight)
+    }
 }
 
