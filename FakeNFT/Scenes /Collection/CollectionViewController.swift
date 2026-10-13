@@ -11,12 +11,20 @@ final class CollectionViewController: UIViewController, CollectionView {
     
     private let presenter: CollectionPresenter
     private var collection: NftCollection?
+    private let sizingHeader = CollectionHeader(frame: .zero)
+    private var laidOutWidth: CGFloat = 0
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.backgroundColor = .ypWhite
         collectionView.dataSource = self
+        collectionView.delegate = self
+        collectionView.register(
+            CollectionHeader.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: CollectionHeader.reuseIdentifier
+        )
         return collectionView
     }()
     
@@ -37,26 +45,73 @@ final class CollectionViewController: UIViewController, CollectionView {
         presenter.viewDidLoad()
     }
     
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let width = collectionView.bounds.width
+        guard width > 0, width != laidOutWidth else { return }
+        laidOutWidth = width
+        collectionView.collectionViewLayout.invalidateLayout()
+    }
+    
     func showCollection(_ collection: NftCollection) {
         self.collection = collection
         collectionView.reloadData()
     }
+    
+    
 }
 
 extension CollectionViewController: UICollectionViewDataSource {
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
         0
     }
-
+    
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         UICollectionViewCell()
+    }
+    
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        guard
+            kind == UICollectionView.elementKindSectionHeader,
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CollectionHeader.reuseIdentifier, for: indexPath) as? CollectionHeader else {
+            return UICollectionReusableView()
+        }
+        if let collection {
+            header.configure(with: collection)
+        }
+        return header
+    }
+}
+
+extension CollectionViewController: UICollectionViewDelegateFlowLayout {
+
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
+        guard let collection else { return .zero }
+        let width = collectionView.bounds.width
+        guard width > 0 else { return .zero }
+        sizingHeader.frame.size.width = width
+        sizingHeader.configure(with: collection)
+        let height = sizingHeader.systemLayoutSizeFitting(
+            CGSize(width: width, height: 0),
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        ).height
+        return CGSize(width: width, height: ceil(height))
     }
 }
 
