@@ -22,6 +22,7 @@ final class CollectionViewController: UIViewController, CollectionView {
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(CollectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CollectionHeader.reuseIdentifier)
+        collectionView.register(CollectionNftCell.self)
         return collectionView
     }()
     
@@ -83,7 +84,17 @@ extension CollectionViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        UICollectionViewCell()
+        let cell: CollectionNftCell = collectionView.dequeueReusableCell(indexPath: indexPath)
+        let id = collection?.nfts[indexPath.item]
+        cell.onLikeTap = { [weak self] in
+            guard let id else { return }
+            self?.presenter.didTapLike(id: id)
+        }
+        cell.onCartTap = { [weak self] in
+            guard let id else { return }
+            self?.presenter.didTapCart(id: id)
+        }
+        return cell
     }
     
     func collectionView(
@@ -165,9 +176,7 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
     }
     
     func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
+        _ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         presenter.didSelectNft(at: indexPath.item)
     }
 }

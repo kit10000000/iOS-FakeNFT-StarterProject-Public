@@ -36,4 +36,10 @@ final class CollectionPresenter {
         guard collection.nfts.indices.contains(index) else { return }
         view?.openNft(with: collection.nfts[index])
     }
+    
+    func didTapLike(id: String) {
+    }
+
+    func didTapCart(id: String) {
+    }
 }
