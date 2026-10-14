@@ -29,7 +29,7 @@ final class CartViewCell: UITableViewCell {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.kf.setImage(with: URL(string: "https://cdnb.artstation.com/p/assets/images/images/008/358/375/large/emily-ritchie-white-n-black.jpg?1512240335")) { result in
+        imageView.kf.setImage(with: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIvzxwiZ8YpkZeQnJn6YFthVw73X8lVRGP1aQGcFlmlw&s=10")) { result in
             switch result {
             case .success(let value):
                 #if DEBUG
@@ -71,16 +71,14 @@ final class CartViewCell: UITableViewCell {
         return label
     }()
 
-    private lazy var ratingView: UIView = {
-        let view = UIView()
-        return view
-    }()
+    private lazy var ratingView: UIView = RatingView()
 
     private lazy var labelsStack: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, ratingView, priceCaptionLabel, priceLabel])
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.spacing = 4
+        stackView.alignment = .leading
         stackView.setCustomSpacing(12, after: ratingView)
         return stackView
     }()
