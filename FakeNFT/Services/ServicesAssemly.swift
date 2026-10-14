@@ -12,10 +12,14 @@ final class ServicesAssembly {
     }
 
     var nftService: NftService {
+    #if DEBUG
+        NftServiceMockImpl()
+    #else
         NftServiceImpl(
             networkClient: networkClient,
             storage: nftStorage
         )
+    #endif
     }
 
     var orderService: OrderService {

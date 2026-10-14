@@ -10,8 +10,8 @@ import Foundation
 // MARK: - Protocol
 
 protocol CartPresenterProtocol {
-    var nfts: [String] { get }
-    var total: Decimal? { get }
+    var nftCartViewModelArray: [NftCartViewModel] { get }
+    var total: Double? { get }
     func viewDidLoad()
     func didTapPay()
 }
@@ -27,18 +27,31 @@ final class CartPresenterImpl: CartPresenterProtocol {
     // MARK: - Properties
 
     weak var view: CartViewControllerProtocol?
-    var nfts: [String] {
-        self.order?.nfts ?? []
-    }
+    private(set) var nftCartViewModelArray: [NftCartViewModel] = []
 
-    var total: Decimal? {
-        0
+    var total: Double? {
+        return nfts.map { $0.price }.reduce(0, +)
     }
 
     // MARK: - Private Properties
 
     private var order: Order?
-    private let service: OrderService
+    private var nfts: [Nft] = [] {
+        didSet {
+            nftCartViewModelArray = nfts.map {
+                NftCartViewModel(
+                    name: $0.name,
+                    image: $0.images.first,
+                    rating: $0.rating,
+                    price: $0.price
+                )
+            }
+        }
+    }
+
+    private let orderService: OrderService
+    private let nftService: NftService
+
     private var state = CartState.initial {
         didSet {
             stateDidChanged()
@@ -47,8 +60,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     // MARK: - Init
 
-    init(service: OrderService) {
-        self.service = service
+    init(orderService: OrderService, nftService: NftService) {
+        self.orderService = orderService
+        self.nftService = nftService
     }
 
     // MARK: - Functions
@@ -81,15 +95,17 @@ final class CartPresenterImpl: CartPresenterProtocol {
     }
 
     private func loadOrder() {
-        service.getOrder(id: "1") { [weak self] result in
+        orderService.getOrder(id: "1") { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success(let order):
-                self?.order = order
-                self?.state = .data(order)
+                self.order = order
+                self.loadNfts(ids: order.nfts)
             case .failure(let error):
-                self?.state = .failed(error)
+                self.state = .failed(error)
             }
         }
+
     }
 
     private func makeErrorModel(_ error: Error) -> ErrorModel {
@@ -104,6 +120,27 @@ final class CartPresenterImpl: CartPresenterProtocol {
         let actionText = NSLocalizedString("Error.repeat", comment: "")
         return ErrorModel(message: message, actionText: actionText) { [weak self] in
             self?.state = .loading
+        }
+    }
+
+    private func loadNfts(ids: [String]) {
+        let group = DispatchGroup()
+        var loaded: [String: Nft] = [:]
+
+        for id in ids {
+            group.enter()
+            nftService.loadNft(id: id) { result in
+                if case .success(let nft) = result {
+                    loaded[id] = nft
+                }
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) { [weak self] in
+            guard let self, let order = self.order else { return }
+            self.nfts = ids.compactMap { loaded[$0] }
+            self.state = .data(order)
         }
     }
 }

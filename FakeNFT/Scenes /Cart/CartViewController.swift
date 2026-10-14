@@ -141,10 +141,10 @@ final class CartViewController: UIViewController {
     // MARK: - Private Methods
 
     private func updateSummary() {
-        let count = self.presenter?.nfts.count ?? 0
+        let count = self.presenter?.nftCartViewModelArray.count ?? 0
         let price = self.presenter?.total ?? 0
         countLabel.text = "\(count) NFT"
-        priceLabel.text = "\(price) ETH"
+        priceLabel.text = String(format: "%.2f ETH", price)
     }
 }
 
@@ -169,14 +169,15 @@ extension CartViewController: UITableViewDelegate {
 
 extension CartViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return presenter?.nfts.count ?? 0
+        return presenter?.nftCartViewModelArray.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: CartViewCell.reuseIdentifier, for: indexPath)
-        guard let cartViewCell = cell as? CartViewCell else {
-            return UITableViewCell()
-        }
-        return cartViewCell
+        guard
+            let cell = tableView.dequeueReusableCell(withIdentifier: CartViewCell.reuseIdentifier, for: indexPath) as? CartViewCell,
+            let model = presenter?.nftCartViewModelArray[indexPath.row]
+        else { return UITableViewCell() }
+        cell.configure(nft: model)
+        return cell
     }
 }

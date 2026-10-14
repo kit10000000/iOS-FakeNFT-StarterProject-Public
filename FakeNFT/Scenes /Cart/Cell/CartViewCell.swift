@@ -29,18 +29,7 @@ final class CartViewCell: UITableViewCell {
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.kf.setImage(with: URL(string: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTIvzxwiZ8YpkZeQnJn6YFthVw73X8lVRGP1aQGcFlmlw&s=10")) { result in
-            switch result {
-            case .success(let value):
-                #if DEBUG
-                print("img ok:", value.image.size)
-                #endif
-            case .failure(let error):
-                #if DEBUG
-                print("img fail:", error)
-                #endif
-            }
-        }
+        imageView.backgroundColor = .ypLightGrey
         return imageView
     }()
 
@@ -49,7 +38,7 @@ final class CartViewCell: UITableViewCell {
         label.font = .bodyBold
         label.textColor = .textPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "Example name"
+        label.text = ""
         return label
     }()
 
@@ -67,11 +56,11 @@ final class CartViewCell: UITableViewCell {
         label.font = .bodyBold
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .ypBlack
-        label.text = "1,78 ETH"
+        label.text = ""
         return label
     }()
 
-    private lazy var ratingView: UIView = RatingView()
+    private lazy var ratingView: RatingView = RatingView()
 
     private lazy var labelsStack: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, ratingView, priceCaptionLabel, priceLabel])
@@ -125,5 +114,14 @@ final class CartViewCell: UITableViewCell {
     @available(*, unavailable)
     required init?(coder: NSCoder) {
         nil
+    }
+
+    // MARK: - Methods
+
+    func configure(nft: NftCartViewModel) {
+        titleLabel.text = nft.name
+        nftImageView.kf.setImage(with: nft.image)
+        priceLabel.text = String(format: "%.2f ETH", nft.price)
+        ratingView.configure(rating: nft.rating)
     }
 }
