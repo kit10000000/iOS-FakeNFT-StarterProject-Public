@@ -145,7 +145,7 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
         let width = collectionView.bounds.width
         guard width > 0 else { return .zero }
         sizingHeader.frame.size.width = width
-        sizingHeader.configure(with: collection)
+        sizingHeader.setText(from: collection)
         let height = sizingHeader.systemLayoutSizeFitting(
             CGSize(width: width, height: 0),
             withHorizontalFittingPriority: .required,

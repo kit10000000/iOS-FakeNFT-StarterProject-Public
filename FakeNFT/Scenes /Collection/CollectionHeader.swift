@@ -41,6 +41,10 @@ final class CollectionHeader: UICollectionReusableView {
 
     func configure(with collection: NftCollection) {
         coverImageView.kf.setImage(with: collection.cover)
+        setText(from: collection)
+    }
+
+    func setText(from collection: NftCollection) {
         nameLabel.text = collection.name
         authorButton.setTitle(authorLinkTitle(collection.author), for: .normal)
         descriptionLabel.text = collection.description
