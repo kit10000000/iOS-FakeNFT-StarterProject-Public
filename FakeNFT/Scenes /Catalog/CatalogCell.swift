@@ -55,10 +55,15 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
         nameLabel.textColor = .ypBlackUniversal
         countLabel.textColor = .ypBlackUniversal
 
-        let titleRow = UIStackView(arrangedSubviews: [nameLabel, countLabel])
+        let spacer = UIView()
+        let titleRow = UIStackView(arrangedSubviews: [nameLabel, countLabel, spacer])
         titleRow.axis = .horizontal
         titleRow.spacing = 4
         titleRow.alignment = .firstBaseline
+        nameLabel.setContentHuggingPriority(.required, for: .horizontal)
+        nameLabel.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        countLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        spacer.setContentHuggingPriority(.defaultLow, for: .horizontal)
 
         let contentStack = UIStackView(arrangedSubviews: [coverContainer, titleRow])
         contentStack.axis = .vertical
