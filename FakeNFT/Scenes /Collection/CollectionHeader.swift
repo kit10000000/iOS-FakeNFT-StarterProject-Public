@@ -12,6 +12,7 @@ final class CollectionHeader: UICollectionReusableView {
 
     static let reuseIdentifier = "CollectionHeader"
 
+    private let coverContainer = UIView()
     private let coverImageView = UIImageView()
     private let nameLabel = UILabel()
     private let authorCaptionLabel = UILabel()
@@ -41,29 +42,39 @@ final class CollectionHeader: UICollectionReusableView {
     func configure(with collection: NftCollection) {
         coverImageView.kf.setImage(with: collection.cover)
         nameLabel.text = collection.name
-        authorButton.setTitle(collection.author, for: .normal)
+        authorButton.setTitle(authorLinkTitle(collection.author), for: .normal)
         descriptionLabel.text = collection.description
     }
-    
+
+    private func authorLinkTitle(_ author: String) -> String {
+        if author == "https://ya.ru" {
+            return "John Doe"
+        }
+        return author
+    }
+
     @objc private func authorButtonTapped() {
         onAuthorTap?()
     }
 
     private func setupView() {
-        backgroundColor = .ypWhite
+        backgroundColor = .ypWhiteUniversal
+
+        coverContainer.clipsToBounds = true
+        coverContainer.layer.cornerRadius = 12
+        coverContainer.backgroundColor = .ypLightGrey
 
         coverImageView.contentMode = .scaleAspectFill
-        coverImageView.clipsToBounds = true
-        coverImageView.layer.cornerRadius = 12
-        coverImageView.backgroundColor = .ypLightGrey
+        coverContainer.addSubview(coverImageView)
+        coverImageView.translatesAutoresizingMaskIntoConstraints = false
 
         nameLabel.font = .headline3
-        nameLabel.textColor = .ypBlack
+        nameLabel.textColor = .ypBlackUniversal
         nameLabel.numberOfLines = 0
 
         authorCaptionLabel.text = "Автор коллекции:"
         authorCaptionLabel.font = .bodyRegular
-        authorCaptionLabel.textColor = .ypBlack
+        authorCaptionLabel.textColor = .ypBlackUniversal
 
         authorButton.titleLabel?.font = .bodyRegular
         authorButton.setTitleColor(.ypBlueUniversal, for: .normal)
@@ -71,7 +82,7 @@ final class CollectionHeader: UICollectionReusableView {
         authorButton.contentHorizontalAlignment = .leading
 
         descriptionLabel.font = .bodyRegular
-        descriptionLabel.textColor = .ypBlack
+        descriptionLabel.textColor = .ypBlackUniversal
         descriptionLabel.numberOfLines = 0
 
         let authorRow = UIStackView(arrangedSubviews: [authorCaptionLabel, authorButton])
@@ -86,7 +97,7 @@ final class CollectionHeader: UICollectionReusableView {
         textStack.isLayoutMarginsRelativeArrangement = true
         textStack.layoutMargins = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
 
-        let contentStack = UIStackView(arrangedSubviews: [coverImageView, textStack])
+        let contentStack = UIStackView(arrangedSubviews: [coverContainer, textStack])
         contentStack.axis = .vertical
         contentStack.spacing = 16
 
@@ -94,7 +105,11 @@ final class CollectionHeader: UICollectionReusableView {
         contentStack.translatesAutoresizingMaskIntoConstraints = false
 
         NSLayoutConstraint.activate([
-            coverImageView.heightAnchor.constraint(equalToConstant: 279),
+            coverContainer.heightAnchor.constraint(equalToConstant: 279),
+            coverImageView.topAnchor.constraint(equalTo: coverContainer.topAnchor),
+            coverImageView.leadingAnchor.constraint(equalTo: coverContainer.leadingAnchor),
+            coverImageView.trailingAnchor.constraint(equalTo: coverContainer.trailingAnchor),
+            coverImageView.heightAnchor.constraint(equalTo: coverImageView.widthAnchor, multiplier: 1240.0 / 1500.0),
             contentStack.leadingAnchor.constraint(equalTo: leadingAnchor),
             contentStack.trailingAnchor.constraint(equalTo: trailingAnchor),
             contentStack.topAnchor.constraint(equalTo: topAnchor),

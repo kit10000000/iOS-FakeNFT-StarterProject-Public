@@ -12,13 +12,15 @@ final class CollectionViewController: UIViewController, CollectionView {
     private let presenter: CollectionPresenter
     private let servicesAssembly: ServicesAssembly
     private var collection: NftCollection?
+    private var nfts: [Nft] = []
     private let sizingHeader = CollectionHeader(frame: .zero)
     private var laidOutWidth: CGFloat = 0
     
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .ypWhite
+        collectionView.backgroundColor = .ypWhiteUniversal
+        collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(CollectionHeader.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: CollectionHeader.reuseIdentifier)
@@ -38,22 +40,38 @@ final class CollectionViewController: UIViewController, CollectionView {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .ypWhite
+        overrideUserInterfaceStyle = .light
+        view.backgroundColor = .ypWhiteUniversal
         view.addSubview(collectionView)
         collectionView.constraintEdges(to: view)
         presenter.viewDidLoad()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let appearance = UINavigationBarAppearance()
+        appearance.configureWithTransparentBackground()
+        navigationItem.standardAppearance = appearance
+        navigationItem.scrollEdgeAppearance = appearance
+        navigationItem.compactAppearance = appearance
+        navigationController?.navigationBar.tintColor = .ypBlackUniversal
+    }
+    
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
+        let bottom = view.safeAreaInsets.bottom
+        if collectionView.contentInset.bottom != bottom {
+            collectionView.contentInset.bottom = bottom
+        }
         let width = collectionView.bounds.width
         guard width > 0, width != laidOutWidth else { return }
         laidOutWidth = width
         collectionView.collectionViewLayout.invalidateLayout()
     }
     
-    func showCollection(_ collection: NftCollection) {
+    func showCollection(_ collection: NftCollection, nfts: [Nft]) {
         self.collection = collection
+        self.nfts = nfts
         collectionView.reloadData()
     }
     
@@ -77,7 +95,7 @@ extension CollectionViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
-        collection?.nfts.count ?? 0
+        nfts.count
     }
     
     func collectionView(
@@ -85,14 +103,13 @@ extension CollectionViewController: UICollectionViewDataSource {
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
         let cell: CollectionNftCell = collectionView.dequeueReusableCell(indexPath: indexPath)
-        let id = collection?.nfts[indexPath.item]
+        let nft = nfts[indexPath.item]
+        cell.configure(with: nft, isLiked: false, isInCart: false)
         cell.onLikeTap = { [weak self] in
-            guard let id else { return }
-            self?.presenter.didTapLike(id: id)
+            self?.presenter.didTapLike(id: nft.id)
         }
         cell.onCartTap = { [weak self] in
-            guard let id else { return }
-            self?.presenter.didTapCart(id: id)
+            self?.presenter.didTapCart(id: nft.id)
         }
         return cell
     }

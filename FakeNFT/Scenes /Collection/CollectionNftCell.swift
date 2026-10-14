@@ -62,8 +62,8 @@ final class CollectionNftCell: UICollectionViewCell, ReuseIdentifying {
     }
 
     private func setupView() {
-        backgroundColor = .ypWhite
-        contentView.backgroundColor = .ypWhite
+        backgroundColor = .ypWhiteUniversal
+        contentView.backgroundColor = .ypWhiteUniversal
 
         coverImageView.contentMode = .scaleAspectFill
         coverImageView.clipsToBounds = true
@@ -82,15 +82,15 @@ final class CollectionNftCell: UICollectionViewCell, ReuseIdentifying {
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
 
         nameLabel.font = .bodyBold
-        nameLabel.textColor = .ypBlack
+        nameLabel.textColor = .ypBlackUniversal
         nameLabel.numberOfLines = 1
 
         priceLabel.font = .caption2
-        priceLabel.textColor = .ypBlack
+        priceLabel.textColor = .ypBlackUniversal
         priceLabel.numberOfLines = 1
 
         cartButton.setImage(UIImage(systemName: "cart", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18)), for: .normal)
-        cartButton.tintColor = .ypBlack
+        cartButton.tintColor = .ypBlackUniversal
         cartButton.addTarget(self, action: #selector(cartButtonTapped), for: .touchUpInside)
         cartButton.setContentHuggingPriority(.required, for: .horizontal)
 

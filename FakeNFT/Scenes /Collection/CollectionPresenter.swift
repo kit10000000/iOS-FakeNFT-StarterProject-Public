@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CollectionView: AnyObject {
-    func showCollection(_ collection: NftCollection)
+    func showCollection(_ collection: NftCollection, nfts: [Nft])
     func openAuthorWebsite(_ url: URL)
     func openNft(with id: String)
 }
@@ -17,13 +17,15 @@ final class CollectionPresenter {
     
     weak var view: CollectionView?
     private let collection: NftCollection
-    
-    init(collection: NftCollection) {
+    private let nfts: [Nft]
+
+    init(collection: NftCollection, nfts: [Nft]) {
         self.collection = collection
+        self.nfts = nfts
     }
-    
+
     func viewDidLoad() {
-        view?.showCollection(collection)
+        view?.showCollection(collection, nfts: nfts)
     }
     
     func didTapAuthor() {
@@ -33,8 +35,8 @@ final class CollectionPresenter {
     }
     
     func didSelectNft(at index: Int) {
-        guard collection.nfts.indices.contains(index) else { return }
-        view?.openNft(with: collection.nfts[index])
+        guard nfts.indices.contains(index) else { return }
+        view?.openNft(with: nfts[index].id)
     }
     
     func didTapLike(id: String) {

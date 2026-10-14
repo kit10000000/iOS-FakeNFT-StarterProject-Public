@@ -10,6 +10,7 @@ import Kingfisher
 
 final class CatalogCell: UITableViewCell, ReuseIdentifying {
     
+    private let coverContainer = UIView()
     private let coverImageView = UIImageView()
     private let nameLabel = UILabel()
     private let countLabel = UILabel()
@@ -40,39 +41,44 @@ final class CatalogCell: UITableViewCell, ReuseIdentifying {
     private func setupView() {
         selectionStyle = .none
         backgroundColor = .ypWhiteUniversal
-        
+
+        coverContainer.clipsToBounds = true
+        coverContainer.layer.cornerRadius = 8
+        coverContainer.backgroundColor = .ypLightGrey
+
         coverImageView.contentMode = .scaleAspectFill
-        coverImageView.clipsToBounds = true
-        coverImageView.layer.cornerRadius = 8
-        coverImageView.backgroundColor = .ypLightGrey
-        
+        coverContainer.addSubview(coverImageView)
+        coverImageView.translatesAutoresizingMaskIntoConstraints = false
+
         nameLabel.font = .bodyBold
         countLabel.font = .bodyBold
-        nameLabel.textColor = .ypBlack
-        countLabel.textColor = .ypBlack
-        
+        nameLabel.textColor = .ypBlackUniversal
+        countLabel.textColor = .ypBlackUniversal
+
         let titleRow = UIStackView(arrangedSubviews: [nameLabel, countLabel])
         titleRow.axis = .horizontal
         titleRow.spacing = 4
         titleRow.alignment = .firstBaseline
-        
-        let contentStack = UIStackView(arrangedSubviews: [coverImageView, titleRow])
+
+        let contentStack = UIStackView(arrangedSubviews: [coverContainer, titleRow])
         contentStack.axis = .vertical
         contentStack.spacing = 8
-        
-        contentView.addSubview(contentStack)
-        
-        contentStack.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            coverImageView.heightAnchor.constraint(equalToConstant: 140),
 
+        contentView.addSubview(contentStack)
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
+
+        NSLayoutConstraint.activate([
+            coverContainer.heightAnchor.constraint(equalToConstant: 140),
+            coverImageView.topAnchor.constraint(equalTo: coverContainer.topAnchor),
+            coverImageView.leadingAnchor.constraint(equalTo: coverContainer.leadingAnchor),
+            coverImageView.trailingAnchor.constraint(equalTo: coverContainer.trailingAnchor),
+            coverImageView.heightAnchor.constraint(equalTo: coverImageView.widthAnchor, multiplier: 1240.0 / 1500.0),
             contentStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             contentStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             contentStack.topAnchor.constraint(equalTo: contentView.topAnchor),
             contentStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20)
         ])
-        
+
         countLabel.setContentHuggingPriority(.required, for: .horizontal)
     }
     
