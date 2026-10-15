@@ -213,10 +213,10 @@ extension CartViewController: CartViewControllerProtocol {
     }
 
     func showLoading() {
-        loadingBackgroundView.isHidden = isFirstLoad
-        activityIndicator.startAnimating()
         let hasLoadedItems = (presenter?.nftCartViewModelArray.count ?? 0) > 0
+        loadingBackgroundView.isHidden = isFirstLoad || !hasLoadedItems
         bottomPanel.isHidden = isFirstLoad || !hasLoadedItems
+        activityIndicator.startAnimating()
         isFirstLoad = false
         emptyCartTextLabel.isHidden = true
         tableView.isUserInteractionEnabled = false
