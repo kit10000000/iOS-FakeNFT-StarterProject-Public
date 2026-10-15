@@ -6,9 +6,11 @@
 //
 
 import UIKit
+import ProgressHUD
 
 protocol CartViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     func display()
+    func showEmptyState()
 }
 
 final class CartViewController: UIViewController {
@@ -21,6 +23,7 @@ final class CartViewController: UIViewController {
         static let labelsToButtonSpacing: CGFloat = 24
         static let payButtonHeight: CGFloat = 44
         static let payButtonMaxWidth: CGFloat = 240
+        static let loadingBackgroundSize: CGFloat = 60
     }
 
     // MARK: - Properties
@@ -88,6 +91,27 @@ final class CartViewController: UIViewController {
         return stackView
     }()
 
+    private lazy var emptyCartTextLabel: UILabel = {
+        let label = UILabel()
+        label.text = NSLocalizedString("Cart.empty", comment: "Empty cart placeholder")
+        label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+        label.textColor = .ypBlack
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.isHidden = true
+        return label
+    }()
+
+    private lazy var loadingBackgroundView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .ypLightGrey
+        view.layer.cornerRadius = 12
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
+        return view
+    }()
+
+    private var isFirstLoad = true
+
     // MARK: - Initializers
 
     init(presenter: CartPresenterProtocol) {
@@ -107,8 +131,16 @@ final class CartViewController: UIViewController {
         bottomPanel.addSubview(labelsStack)
         bottomPanel.addSubview(payButton)
 
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicator.hidesWhenStopped = true
+
+        loadingBackgroundView.addSubview(activityIndicator)
+
         view.addSubview(tableView)
         view.addSubview(bottomPanel)
+        view.addSubview(emptyCartTextLabel)
+        view.addSubview(loadingBackgroundView)
+        view.addSubview(activityIndicator)
 
         let preferredWidth = payButton.widthAnchor.constraint(equalToConstant: Constants.payButtonMaxWidth)
         preferredWidth.priority = .defaultHigh
@@ -132,10 +164,24 @@ final class CartViewController: UIViewController {
             payButton.leadingAnchor.constraint(greaterThanOrEqualTo: labelsStack.trailingAnchor, constant: Constants.labelsToButtonSpacing),
             payButton.heightAnchor.constraint(equalToConstant: Constants.payButtonHeight),
             payButton.widthAnchor.constraint(lessThanOrEqualToConstant: Constants.payButtonMaxWidth),
-            preferredWidth
-        ])
+            preferredWidth,
 
-        presenter?.viewDidLoad()
+            emptyCartTextLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyCartTextLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+
+            loadingBackgroundView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingBackgroundView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            loadingBackgroundView.widthAnchor.constraint(equalToConstant: Constants.loadingBackgroundSize),
+            loadingBackgroundView.heightAnchor.constraint(equalToConstant: Constants.loadingBackgroundSize),
+
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presenter?.viewWillAppear()
     }
 
     // MARK: - Private Methods
@@ -146,6 +192,7 @@ final class CartViewController: UIViewController {
         countLabel.text = "\(count) NFT"
         priceLabel.text = String(format: "%.2f ETH", price)
     }
+
 }
 
 // MARK: - CartViewControllerProtocol
@@ -154,7 +201,37 @@ extension CartViewController: CartViewControllerProtocol {
     func display() {
         tableView.reloadData()
         updateSummary()
+        bottomPanel.isHidden = false
+        emptyCartTextLabel.isHidden = true
+        tableView.isHidden = false
     }
+
+    func showEmptyState() {
+        bottomPanel.isHidden = true
+        emptyCartTextLabel.isHidden = false
+        tableView.isHidden = true
+    }
+
+    func showLoading() {
+        loadingBackgroundView.isHidden = isFirstLoad
+        activityIndicator.startAnimating()
+        let hasLoadedItems = (presenter?.nftCartViewModelArray.count ?? 0) > 0
+        bottomPanel.isHidden = isFirstLoad || !hasLoadedItems
+        isFirstLoad = false
+        emptyCartTextLabel.isHidden = true
+        tableView.isUserInteractionEnabled = false
+        payButton.isEnabled = false
+        tableView.isHidden = false
+    }
+
+    func hideLoading() {
+        activityIndicator.stopAnimating()
+        tableView.isUserInteractionEnabled = true
+        payButton.isEnabled = true
+        loadingBackgroundView.isHidden = true
+    }
+
+
 }
 
 // MARK: - UITableViewDelegate

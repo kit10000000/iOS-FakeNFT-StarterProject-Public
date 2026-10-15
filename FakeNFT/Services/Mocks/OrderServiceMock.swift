@@ -24,7 +24,6 @@ final class OrderServiceMockImpl: OrderService {
                 completion(.failure(error))
             }
         }
-
     }
 }
 #endif

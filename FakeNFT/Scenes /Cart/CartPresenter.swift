@@ -12,14 +12,14 @@ import Foundation
 protocol CartPresenterProtocol {
     var nftCartViewModelArray: [NftCartViewModel] { get }
     var total: Double? { get }
-    func viewDidLoad()
+    func viewWillAppear()
     func didTapPay()
 }
 
 // MARK: - State
 
 enum CartState {
-    case initial, loading, failed(Error), data(Order)
+    case initial, loading, empty, failed(Error), data(Order)
 }
 
 final class CartPresenterImpl: CartPresenterProtocol {
@@ -58,16 +58,16 @@ final class CartPresenterImpl: CartPresenterProtocol {
         }
     }
 
-    // MARK: - Init
+    // MARK: - Initializers
 
     init(orderService: OrderService, nftService: NftService) {
         self.orderService = orderService
         self.nftService = nftService
     }
 
-    // MARK: - Functions
+    // MARK: - Methods
 
-    func viewDidLoad() {
+    func viewWillAppear() {
         state = .loading
     }
 
@@ -91,6 +91,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
             let errorModel = makeErrorModel(error)
             view?.hideLoading()
             view?.showError(errorModel)
+        case .empty:
+            view?.hideLoading()
+            view?.showEmptyState()
         }
     }
 
@@ -100,12 +103,16 @@ final class CartPresenterImpl: CartPresenterProtocol {
             switch result {
             case .success(let order):
                 self.order = order
-                self.loadNfts(ids: order.nfts)
+
+                if order.nfts.isEmpty {
+                    state = .empty
+                } else {
+                    self.loadNfts(ids: order.nfts)
+                }
             case .failure(let error):
                 self.state = .failed(error)
             }
         }
-
     }
 
     private func makeErrorModel(_ error: Error) -> ErrorModel {

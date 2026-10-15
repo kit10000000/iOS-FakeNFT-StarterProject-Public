@@ -2,6 +2,7 @@ final class ServicesAssembly {
 
     private let networkClient: NetworkClient
     private let nftStorage: NftStorage
+    private var useMock = true
 
     init(
         networkClient: NetworkClient,
@@ -12,18 +13,17 @@ final class ServicesAssembly {
     }
 
     var nftService: NftService {
-    #if DEBUG
-        NftServiceMockImpl()
-    #else
-        NftServiceImpl(
-            networkClient: networkClient,
-            storage: nftStorage
-        )
-    #endif
+        useMock ?
+            NftServiceMockImpl()
+        :
+            NftServiceImpl(
+                networkClient: networkClient,
+                storage: nftStorage
+            )
     }
 
     var orderService: OrderService {
-        #if DEBUG
+        useMock ?
             OrderServiceMockImpl(result: .success(
                 Order(
                     id: "df432926-0dda-43f6-8da9-bae96de34cf9",
@@ -35,10 +35,7 @@ final class ServicesAssembly {
                     ]
                 )
             ))
-        #else
-            OrderServiceImpl(
-                networkClient: networkClient
-            )
-        #endif
+        :
+            OrderServiceImpl(networkClient: networkClient)
     }
 }

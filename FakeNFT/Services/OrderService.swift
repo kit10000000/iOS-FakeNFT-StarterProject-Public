@@ -20,7 +20,6 @@ final class OrderServiceImpl: OrderService {
     }
 
     func getOrder(id: String, completion: @escaping (Result<Order, Error>) -> Void) {
-
         let request = OrderRequest(id: id)
         networkClient.send(request: request, type: Order.self) { result in
             switch result {
