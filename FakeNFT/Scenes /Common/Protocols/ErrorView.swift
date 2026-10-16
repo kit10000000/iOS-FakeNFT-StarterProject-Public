@@ -4,6 +4,8 @@ struct ErrorModel {
     let message: String
     let actionText: String
     let action: () -> Void
+    var cancelText: String? = nil
+    var cancelAction: (() -> Void)? = nil
 }
 
 protocol ErrorView {
@@ -23,6 +25,10 @@ extension ErrorView where Self: UIViewController {
             model.action()
         }
         alert.addAction(action)
+        
+        if let cancelText = model.cancelText {
+            alert.addAction(UIAlertAction(title: cancelText, style: .cancel) { _ in model.cancelAction?() })
+        }
         present(alert, animated: true)
     }
 }
