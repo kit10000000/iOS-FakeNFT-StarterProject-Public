@@ -7,15 +7,23 @@
 
 import UIKit
 
-final class CollectionViewController: UIViewController, CollectionView {
-    
+final class CollectionViewController: UIViewController, CollectionView, LoadingView, ErrorView {
+
     private let presenter: CollectionPresenter
     private let servicesAssembly: ServicesAssembly
-    private var collection: NftCollection?
+    private var headerModel: CollectionHeaderModel?
     private var nfts: [Nft] = []
+    private var isGridEnabled = false
     private let sizingHeader = CollectionHeader(frame: .zero)
     private var laidOutWidth: CGFloat = 0
-    
+
+    lazy var activityIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView()
+        indicator.hidesWhenStopped = true
+        indicator.color = .ypBlackUniversal
+        return indicator
+    }()
+
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
@@ -27,26 +35,29 @@ final class CollectionViewController: UIViewController, CollectionView {
         collectionView.register(CollectionNftCell.self)
         return collectionView
     }()
-    
+
     init(presenter: CollectionPresenter, servicesAssembly: ServicesAssembly) {
         self.presenter = presenter
         self.servicesAssembly = servicesAssembly
         super.init(nibName: nil, bundle: nil)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.backButtonDisplayMode = .minimal
         overrideUserInterfaceStyle = .light
         view.backgroundColor = .ypWhiteUniversal
         view.addSubview(collectionView)
         collectionView.constraintEdges(to: view)
+        view.addSubview(activityIndicator)
+        activityIndicator.constraintCenters(to: view)
         presenter.viewDidLoad()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let appearance = UINavigationBarAppearance()
@@ -55,8 +66,9 @@ final class CollectionViewController: UIViewController, CollectionView {
         navigationItem.scrollEdgeAppearance = appearance
         navigationItem.compactAppearance = appearance
         navigationController?.navigationBar.tintColor = .ypBlackUniversal
+        presenter.viewWillAppear()
     }
-    
+
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         let bottom = view.safeAreaInsets.bottom
@@ -68,19 +80,27 @@ final class CollectionViewController: UIViewController, CollectionView {
         laidOutWidth = width
         collectionView.collectionViewLayout.invalidateLayout()
     }
-    
-    func showCollection(_ collection: NftCollection, nfts: [Nft]) {
-        self.collection = collection
+
+    func setGridInteractionEnabled(_ isEnabled: Bool) {
+        isGridEnabled = isEnabled
+    }
+
+    func showCollection(_ header: CollectionHeaderModel) {
+        headerModel = header
+        collectionView.reloadData()
+    }
+
+    func showNfts(_ nfts: [Nft]) {
         self.nfts = nfts
         collectionView.reloadData()
     }
-    
+
     func openAuthorWebsite(_ url: URL) {
         let webViewController = AuthorWebViewController(url: url)
         webViewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(webViewController, animated: true)
     }
-    
+
     func openNft(with id: String) {
         let assembly = NftDetailAssembly(servicesAssembler: servicesAssembly)
         let input = NftDetailInput(id: id)
@@ -90,14 +110,14 @@ final class CollectionViewController: UIViewController, CollectionView {
 }
 
 extension CollectionViewController: UICollectionViewDataSource {
-    
+
     func collectionView(
         _ collectionView: UICollectionView,
         numberOfItemsInSection section: Int
     ) -> Int {
         nfts.count
     }
-    
+
     func collectionView(
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
@@ -106,14 +126,16 @@ extension CollectionViewController: UICollectionViewDataSource {
         let nft = nfts[indexPath.item]
         cell.configure(with: nft, isLiked: false, isInCart: false)
         cell.onLikeTap = { [weak self] in
-            self?.presenter.didTapLike(id: nft.id)
+            guard let self, self.isGridEnabled else { return }
+            self.presenter.didTapLike(id: nft.id)
         }
         cell.onCartTap = { [weak self] in
-            self?.presenter.didTapCart(id: nft.id)
+            guard let self, self.isGridEnabled else { return }
+            self.presenter.didTapCart(id: nft.id)
         }
         return cell
     }
-    
+
     func collectionView(
         _ collectionView: UICollectionView,
         viewForSupplementaryElementOfKind kind: String,
@@ -121,11 +143,12 @@ extension CollectionViewController: UICollectionViewDataSource {
     ) -> UICollectionReusableView {
         guard
             kind == UICollectionView.elementKindSectionHeader,
-            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CollectionHeader.reuseIdentifier, for: indexPath) as? CollectionHeader else {
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CollectionHeader.reuseIdentifier, for: indexPath) as? CollectionHeader
+        else {
             return UICollectionReusableView()
         }
-        if let collection {
-            header.configure(with: collection)
+        if let headerModel {
+            header.configure(with: headerModel)
         }
         header.onAuthorTap = { [weak self] in
             self?.presenter.didTapAuthor()
@@ -141,11 +164,11 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
         layout collectionViewLayout: UICollectionViewLayout,
         referenceSizeForHeaderInSection section: Int
     ) -> CGSize {
-        guard let collection else { return .zero }
+        guard let headerModel else { return .zero }
         let width = collectionView.bounds.width
         guard width > 0 else { return .zero }
         sizingHeader.frame.size.width = width
-        sizingHeader.setText(from: collection)
+        sizingHeader.setText(from: headerModel)
         let height = sizingHeader.systemLayoutSizeFitting(
             CGSize(width: width, height: 0),
             withHorizontalFittingPriority: .required,
@@ -153,7 +176,7 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
         ).height
         return CGSize(width: width, height: ceil(height))
     }
-    
+
     func collectionView(
         _ collectionView: UICollectionView,
         layout collectionViewLayout: UICollectionViewLayout,
@@ -191,9 +214,13 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
         let itemHeight = itemWidth + 92
         return CGSize(width: itemWidth, height: itemHeight)
     }
-    
+
     func collectionView(
-        _ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        _ collectionView: UICollectionView,
+        didSelectItemAt indexPath: IndexPath
+    ) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        guard isGridEnabled else { return }
         presenter.didSelectNft(at: indexPath.item)
     }
 }

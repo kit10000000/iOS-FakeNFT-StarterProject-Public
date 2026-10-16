@@ -8,6 +8,14 @@
 import UIKit
 import Kingfisher
 
+struct CollectionHeaderModel {
+    let cover: URL
+    let name: String
+    let authorName: String
+    let authorURL: String
+    let description: String
+}
+
 final class CollectionHeader: UICollectionReusableView {
 
     static let reuseIdentifier = "CollectionHeader"
@@ -39,22 +47,15 @@ final class CollectionHeader: UICollectionReusableView {
         onAuthorTap = nil
     }
 
-    func configure(with collection: NftCollection) {
-        coverImageView.kf.setImage(with: collection.cover)
-        setText(from: collection)
+    func configure(with model: CollectionHeaderModel) {
+        coverImageView.kf.setImage(with: model.cover)
+        setText(from: model)
     }
 
-    func setText(from collection: NftCollection) {
-        nameLabel.text = collection.name
-        authorButton.setTitle(authorLinkTitle(collection.author), for: .normal)
-        descriptionLabel.text = collection.description
-    }
-
-    private func authorLinkTitle(_ author: String) -> String {
-        if author == "https://ya.ru" {
-            return "John Doe"
-        }
-        return author
+    func setText(from model: CollectionHeaderModel) {
+        nameLabel.text = model.name
+        authorButton.setTitle(model.authorName, for: .normal)
+        descriptionLabel.text = model.description
     }
 
     @objc private func authorButtonTapped() {

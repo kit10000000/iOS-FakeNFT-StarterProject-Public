@@ -90,8 +90,8 @@ final class CatalogViewController: UIViewController, CatalogView, LoadingView, E
         tableView.reloadData()
     }
 
-    func openCollection(_ collection: NftCollection, nfts: [Nft]) {
-        let viewController = CollectionAssembly(servicesAssembly: servicesAssembly).build(with: collection, nfts: nfts)
+    func openCollection(_ collection: NftCollection) {
+        let viewController = CollectionAssembly(servicesAssembly: servicesAssembly).build(with: collection)
         viewController.hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(viewController, animated: true)
     }

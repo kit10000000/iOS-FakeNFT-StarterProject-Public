@@ -13,7 +13,7 @@ protocol CatalogView: AnyObject {
     func showError(_ model: ErrorModel)
     func setInteractionEnabled(_ isEnabled: Bool)
     func showCollections(_ collections: [NftCollection])
-    func openCollection(_ collection: NftCollection, nfts: [Nft])
+    func openCollection(_ collection: NftCollection)
 }
 
 final class CatalogPresenter {
@@ -75,7 +75,7 @@ final class CatalogPresenter {
         guard state == .data, !isOpeningCollection, collections.indices.contains(index) else { return }
         isOpeningCollection = true
         let collection = collections[index]
-        view?.openCollection(collection, nfts: [])
+        view?.openCollection(collection)
     }
 
     func sortByName() {
