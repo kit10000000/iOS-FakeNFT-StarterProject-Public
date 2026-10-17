@@ -97,7 +97,7 @@ final class CartViewController: UIViewController {
     private lazy var emptyCartTextLabel: UILabel = {
         let label = UILabel()
         label.text = NSLocalizedString("Cart.empty", comment: "Empty cart placeholder")
-        label.font = UIFont.systemFont(ofSize: 12, weight: .bold)
+        label.font = .caption3Bold
         label.textColor = .ypBlack
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isHidden = true
