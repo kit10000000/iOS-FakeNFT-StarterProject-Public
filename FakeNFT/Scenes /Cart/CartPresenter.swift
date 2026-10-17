@@ -84,7 +84,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
         case .loading:
             view?.showLoading()
             loadOrder()
-        case .data(_):
+        case .data:
             view?.hideLoading()
             view?.display()
         case .failed(let error):

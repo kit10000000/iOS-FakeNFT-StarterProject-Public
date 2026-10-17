@@ -24,6 +24,10 @@ final class CartViewController: UIViewController {
         static let payButtonHeight: CGFloat = 44
         static let payButtonMaxWidth: CGFloat = 240
         static let loadingBackgroundSize: CGFloat = 60
+        static let rowHeight: CGFloat = 140
+        static let cornerRadius: CGFloat = 12
+        static let payButtonCornerRadius: CGFloat = 16
+        static let labelsStackSpacing: CGFloat = 2
     }
 
     // MARK: - Properties
@@ -36,9 +40,8 @@ final class CartViewController: UIViewController {
 
     private lazy var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
-        tableView.isScrollEnabled = true
-        tableView.rowHeight = 140
+        tableView.separatorStyle = .none
+        tableView.rowHeight = Constants.rowHeight
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(CartViewCell.self, forCellReuseIdentifier: CartViewCell.reuseIdentifier)
         tableView.delegate = self
@@ -50,7 +53,7 @@ final class CartViewController: UIViewController {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .segmentInactive
-        view.layer.cornerRadius = 12
+        view.layer.cornerRadius = Constants.cornerRadius
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         return view
     }()
@@ -65,7 +68,7 @@ final class CartViewController: UIViewController {
     private lazy var priceLabel: UILabel = {
         let label = UILabel()
         label.font = .bodyBold
-        label.textColor = UIColor(hexString: "1C9F00")
+        label.textColor = .ypGreenUniversal
         return label
     }()
 
@@ -75,7 +78,7 @@ final class CartViewController: UIViewController {
         button.titleLabel?.font = .bodyBold
         button.setTitleColor(.systemBackground, for: .normal)
         button.backgroundColor = .segmentActive
-        button.layer.cornerRadius = 16
+        button.layer.cornerRadius = Constants.payButtonCornerRadius
         button.addAction(UIAction { [weak self] _ in
             self?.presenter?.didTapPay()
         }, for: .touchUpInside)
@@ -86,7 +89,7 @@ final class CartViewController: UIViewController {
     private lazy var labelsStack: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [countLabel, priceLabel])
         stackView.axis = .vertical
-        stackView.spacing = 2
+        stackView.spacing = Constants.labelsStackSpacing
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -104,7 +107,7 @@ final class CartViewController: UIViewController {
     private lazy var loadingBackgroundView: UIView = {
         let view = UIView()
         view.backgroundColor = .ypLightGrey
-        view.layer.cornerRadius = 12
+        view.layer.cornerRadius = Constants.cornerRadius
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isHidden = true
         return view
@@ -127,7 +130,17 @@ final class CartViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupLayout()
+    }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        presenter?.viewWillAppear()
+    }
+
+    // MARK: - Private Methods
+
+    private func setupLayout() {
         bottomPanel.addSubview(labelsStack)
         bottomPanel.addSubview(payButton)
 
@@ -179,18 +192,12 @@ final class CartViewController: UIViewController {
         ])
     }
 
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        presenter?.viewWillAppear()
-    }
-
-    // MARK: - Private Methods
-
     private func updateSummary() {
         let count = self.presenter?.nftCartViewModelArray.count ?? 0
         let price = self.presenter?.total ?? 0
-        countLabel.text = "\(count) NFT"
-        priceLabel.text = String(format: "%.2f ETH", price)
+        let currency = String(format: NSLocalizedString("Cart.currency.ETH", comment: ""))
+        countLabel.text = String(format: NSLocalizedString("Cart.count", comment: ""), count)
+        priceLabel.text = String(format: "%.2f \(currency)", price)
     }
 
 }

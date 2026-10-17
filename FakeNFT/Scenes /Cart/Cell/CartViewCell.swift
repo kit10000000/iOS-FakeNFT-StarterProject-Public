@@ -38,7 +38,6 @@ final class CartViewCell: UITableViewCell {
         label.font = .bodyBold
         label.textColor = .textPrimary
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = ""
         return label
     }()
 
@@ -56,7 +55,6 @@ final class CartViewCell: UITableViewCell {
         label.font = .bodyBold
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .ypBlack
-        label.text = ""
         return label
     }()
 
@@ -121,7 +119,8 @@ final class CartViewCell: UITableViewCell {
     func configure(nft: NftCartViewModel) {
         titleLabel.text = nft.name
         nftImageView.kf.setImage(with: nft.image)
-        priceLabel.text = String(format: "%.2f ETH", nft.price)
+        let currency = String(format: NSLocalizedString("Cart.currency.ETH", comment: ""))
+        priceLabel.text = String(format: "%.2f \(currency)", nft.price)
         ratingView.configure(rating: nft.rating)
     }
 }
