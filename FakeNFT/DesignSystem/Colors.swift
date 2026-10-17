@@ -64,4 +64,33 @@ extension UIColor {
         ? .yaBlackDark
         : .yaBlackLight
     }
+
+    // MARK: - FakeNFT palette (Figma)
+
+    static let ypBlack = UIColor { traits in
+        traits.userInterfaceStyle == .dark
+        ? UIColor(hexString: "FFFFFF")
+        : UIColor(hexString: "1A1B22")
+    }
+
+    static let ypWhite = UIColor { traits in
+        traits.userInterfaceStyle == .dark
+        ? UIColor(hexString: "1A1B22")
+        : UIColor(hexString: "FFFFFF")
+    }
+
+    static let ypLightGrey = UIColor { traits in    
+        traits.userInterfaceStyle == .dark
+        ? UIColor(hexString: "2C2C2E")
+        : UIColor(hexString: "F7F7F8")
+    }
+
+    static let ypGrayUniversal = UIColor(hexString: "625C5C")
+    static let ypRedUniversal = UIColor(hexString: "F56B6C")
+    static let ypBackgroundUniversal = UIColor(hexString: "1A1B22")
+    static let ypGreenUniversal = UIColor(hexString: "1C9F00")
+    static let ypBlueUniversal = UIColor(hexString: "0A84FF")
+    static let ypBlackUniversal = UIColor(hexString: "1A1B22")
+    static let ypWhiteUniversal = UIColor(hexString: "FFFFFF")
+    static let ypYellowUniversal = UIColor(hexString: "FEEF0D")
 }
