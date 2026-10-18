@@ -38,4 +38,8 @@ final class ServicesAssembly {
         :
             OrderServiceImpl(networkClient: networkClient)
     }
+
+    var cartStorage: CartStorage {
+        CartStorage()
+    }
 }

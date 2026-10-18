@@ -51,6 +51,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     private let orderService: OrderService
     private let nftService: NftService
+    private let storage: CartStorageProtocol
 
     private var state = CartState.initial {
         didSet {
@@ -60,9 +61,10 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     // MARK: - Initializers
 
-    init(orderService: OrderService, nftService: NftService) {
+    init(orderService: OrderService, nftService: NftService, storage: CartStorageProtocol) {
         self.orderService = orderService
         self.nftService = nftService
+        self.storage = storage
     }
 
     // MARK: - Methods

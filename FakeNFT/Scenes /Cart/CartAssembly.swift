@@ -18,7 +18,8 @@ public final class CartAssembly {
     public func build() -> UIViewController {
         let presenter = CartPresenterImpl(
             orderService: servicesAssembler.orderService,
-            nftService: servicesAssembler.nftService
+            nftService: servicesAssembler.nftService,
+            storage: servicesAssembler.cartStorage
         )
         let viewController = CartViewController(presenter: presenter)
         presenter.view = viewController
