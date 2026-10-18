@@ -113,6 +113,16 @@ final class CartViewController: UIViewController {
         return view
     }()
 
+    private lazy var sortButton: UIBarButtonItem = {
+        let button = UIBarButtonItem()
+        button.tintColor = .ypBlack
+        let action = UIAction(image: UIImage(resource: .sortIcon)) { [weak self] _ in
+            self?.confirmSortOptions (onConfirm: { print("lets sort") })
+        }
+        button.primaryAction = action
+        return button
+    }()
+
     private var isFirstLoad = true
 
     // MARK: - Initializers
@@ -141,6 +151,9 @@ final class CartViewController: UIViewController {
     // MARK: - Private Methods
 
     private func setupLayout() {
+
+        navigationItem.rightBarButtonItem = sortButton
+
         bottomPanel.addSubview(labelsStack)
         bottomPanel.addSubview(payButton)
 
@@ -223,12 +236,14 @@ extension CartViewController: CartViewControllerProtocol {
         let hasLoadedItems = (presenter?.nftCartViewModelArray.count ?? 0) > 0
         loadingBackgroundView.isHidden = isFirstLoad || !hasLoadedItems
         bottomPanel.isHidden = isFirstLoad || !hasLoadedItems
+        sortButton.isHidden = isFirstLoad || !hasLoadedItems
         activityIndicator.startAnimating()
         isFirstLoad = false
         emptyCartTextLabel.isHidden = true
         tableView.isUserInteractionEnabled = false
         payButton.isEnabled = false
         tableView.isHidden = false
+        sortButton.isEnabled = false
     }
 
     func hideLoading() {
@@ -236,6 +251,8 @@ extension CartViewController: CartViewControllerProtocol {
         tableView.isUserInteractionEnabled = true
         payButton.isEnabled = true
         loadingBackgroundView.isHidden = true
+        sortButton.isHidden = false
+        sortButton.isEnabled = true
     }
 
 
@@ -263,5 +280,19 @@ extension CartViewController: UITableViewDataSource {
         else { return UITableViewCell() }
         cell.configure(nft: model)
         return cell
+    }
+}
+
+// MARK: - Sort
+
+extension CartViewController {
+    func confirmSortOptions(onConfirm: @escaping () -> Void) {
+        let alert = UIAlertController(title: nil, message: NSLocalizedString("Common.sort", comment: ""), preferredStyle: .actionSheet)
+
+        CartSortOption.allCases.forEach {
+            alert.addAction(UIAlertAction(title: $0.title, style: .default) { _ in onConfirm() })
+        }
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Common.close", comment: ""), style: .cancel))
+        present(alert, animated: true)
     }
 }
