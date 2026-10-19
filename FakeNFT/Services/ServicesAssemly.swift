@@ -25,4 +25,8 @@ final class ServicesAssembly {
     var likesService: LikesService {
         LikesServiceImpl(networkClient: networkClient)
     }
+    
+    var catalogOrderService: CatalogOrderService {
+        CatalogOrderServiceImpl(networkClient: networkClient)
+    }
 }
