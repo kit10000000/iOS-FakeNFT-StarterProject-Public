@@ -11,6 +11,7 @@ protocol NetworkRequest {
     var endpoint: URL? { get }
     var httpMethod: HttpMethod { get }
     var dto: Dto? { get }
+    var httpBody: Data? { get }
 }
 
 protocol Dto {
@@ -21,4 +22,5 @@ protocol Dto {
 extension NetworkRequest {
     var httpMethod: HttpMethod { .get }
     var dto: Encodable? { nil }
+    var httpBody: Data? { nil }
 }
