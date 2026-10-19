@@ -117,7 +117,7 @@ final class CartViewController: UIViewController {
         let button = UIBarButtonItem()
         button.tintColor = .ypBlack
         let action = UIAction(image: UIImage(resource: .sortIcon)) { [weak self] _ in
-            self?.confirmSortOptions (onConfirm: { print("lets sort") })
+            self?.confirmSortOptions { option in self?.presenter?.didSelectSort(option: option) }
         }
         button.primaryAction = action
         return button
@@ -255,7 +255,6 @@ extension CartViewController: CartViewControllerProtocol {
         sortButton.isEnabled = true
     }
 
-
 }
 
 // MARK: - UITableViewDelegate
@@ -286,11 +285,11 @@ extension CartViewController: UITableViewDataSource {
 // MARK: - Sort
 
 extension CartViewController {
-    func confirmSortOptions(onConfirm: @escaping () -> Void) {
+    func confirmSortOptions(onConfirm: @escaping (_ option: CartSortOption) -> Void) {
         let alert = UIAlertController(title: nil, message: NSLocalizedString("Common.sort", comment: ""), preferredStyle: .actionSheet)
 
-        CartSortOption.allCases.forEach {
-            alert.addAction(UIAlertAction(title: $0.title, style: .default) { _ in onConfirm() })
+        CartSortOption.allCases.forEach { option in
+            alert.addAction(UIAlertAction(title: option.title, style: .default) { _ in onConfirm(option) })
         }
         alert.addAction(UIAlertAction(title: NSLocalizedString("Common.close", comment: ""), style: .cancel))
         present(alert, animated: true)
