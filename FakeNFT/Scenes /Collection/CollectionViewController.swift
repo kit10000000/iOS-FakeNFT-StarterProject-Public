@@ -13,6 +13,8 @@ final class CollectionViewController: UIViewController, CollectionView, LoadingV
     private let servicesAssembly: ServicesAssembly
     private var headerModel: CollectionHeaderModel?
     private var nfts: [Nft] = []
+    private var likedIds: Set<String> = []
+    private var cartIds: Set<String> = []
     private var isGridEnabled = false
     private let sizingHeader = CollectionHeader(frame: .zero)
     private var laidOutWidth: CGFloat = 0
@@ -90,8 +92,10 @@ final class CollectionViewController: UIViewController, CollectionView, LoadingV
         collectionView.reloadData()
     }
 
-    func showNfts(_ nfts: [Nft]) {
+    func showNfts(_ nfts: [Nft], likedIds: Set<String>, cartIds: Set<String>) {
         self.nfts = nfts
+        self.likedIds = likedIds
+        self.cartIds = cartIds
         collectionView.reloadData()
     }
 
@@ -111,20 +115,14 @@ final class CollectionViewController: UIViewController, CollectionView, LoadingV
 
 extension CollectionViewController: UICollectionViewDataSource {
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        numberOfItemsInSection section: Int
-    ) -> Int {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         nfts.count
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        cellForItemAt indexPath: IndexPath
-    ) -> UICollectionViewCell {
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell: CollectionNftCell = collectionView.dequeueReusableCell(indexPath: indexPath)
         let nft = nfts[indexPath.item]
-        cell.configure(with: nft, isLiked: false, isInCart: false)
+        cell.configure(with: nft, isLiked: likedIds.contains(nft.id), isInCart: cartIds.contains(nft.id))
         cell.onLikeTap = { [weak self] in
             guard let self, self.isGridEnabled else { return }
             self.presenter.didTapLike(id: nft.id)
@@ -136,11 +134,8 @@ extension CollectionViewController: UICollectionViewDataSource {
         return cell
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath) -> UICollectionReusableView {
         guard
             kind == UICollectionView.elementKindSectionHeader,
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: CollectionHeader.reuseIdentifier, for: indexPath) as? CollectionHeader
@@ -177,35 +172,20 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: width, height: ceil(height))
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        insetForSectionAt section: Int
-    ) -> UIEdgeInsets {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumInteritemSpacingForSectionAt section: Int
-    ) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
         9.5
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        minimumLineSpacingForSectionAt section: Int
-    ) -> CGFloat {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
         0
     }
 
     func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        sizeForItemAt indexPath: IndexPath
-    ) -> CGSize {
+        _ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let columns: CGFloat = 3
         let inset: CGFloat = 16
         let spacing: CGFloat = 9.5
@@ -215,10 +195,7 @@ extension CollectionViewController: UICollectionViewDelegateFlowLayout {
         return CGSize(width: itemWidth, height: itemHeight)
     }
 
-    func collectionView(
-        _ collectionView: UICollectionView,
-        didSelectItemAt indexPath: IndexPath
-    ) {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         guard isGridEnabled else { return }
         presenter.didSelectNft(at: indexPath.item)

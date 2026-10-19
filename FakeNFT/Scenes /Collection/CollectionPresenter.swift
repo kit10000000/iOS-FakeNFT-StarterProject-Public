@@ -13,7 +13,7 @@ protocol CollectionView: AnyObject {
     func showError(_ model: ErrorModel)
     func setGridInteractionEnabled(_ isEnabled: Bool)
     func showCollection(_ header: CollectionHeaderModel)
-    func showNfts(_ nfts: [Nft])
+    func showNfts(_ nfts: [Nft], likedIds: Set<String>, cartIds: Set<String>)
     func openAuthorWebsite(_ url: URL)
     func openNft(with id: String)
 }
@@ -30,14 +30,20 @@ final class CollectionPresenter {
 
     private let collection: NftCollection
     private let nftService: NftService
+    private let likesService: LikesService
+    private let orderService: CatalogOrderService
     private let stateQueue = DispatchQueue(label: "catalog.collection.load", qos: .userInitiated)
     private var nfts: [Nft] = []
+    private var likedIds: [String] = []
+    private var cartIds: [String] = []
     private var state: State = .loading
     private var isOpening = false
 
-    init(collection: NftCollection, nftService: NftService) {
+    init(collection: NftCollection, nftService: NftService, likesService: LikesService, orderService: CatalogOrderService) {
         self.collection = collection
         self.nftService = nftService
+        self.likesService = likesService
+        self.orderService = orderService
     }
 
     func viewDidLoad() {
@@ -50,9 +56,11 @@ final class CollectionPresenter {
         guard !ids.isEmpty else {
             state = .data
             nfts = []
+            likedIds = []
+            cartIds = []
             view?.hideLoading()
             view?.setGridInteractionEnabled(true)
-            view?.showNfts([])
+            view?.showNfts([], likedIds: [], cartIds: [])
             return
         }
 
@@ -62,6 +70,8 @@ final class CollectionPresenter {
 
         let group = DispatchGroup()
         var loaded = Array<Nft?>(repeating: nil, count: ids.count)
+        var liked: [String] = []
+        var cart: [String] = []
         var failed = false
 
         for (index, id) in ids.enumerated() {
@@ -83,6 +93,40 @@ final class CollectionPresenter {
             }
         }
 
+        group.enter()
+        likesService.loadProfile { [weak self] result in
+            guard let self else {
+                group.leave()
+                return
+            }
+            self.stateQueue.async {
+                switch result {
+                case .success(let profile):
+                    liked = profile.likes
+                case .failure:
+                    failed = true
+                }
+                group.leave()
+            }
+        }
+
+        group.enter()
+        orderService.loadNftIds { [weak self] result in
+            guard let self else {
+                group.leave()
+                return
+            }
+            self.stateQueue.async {
+                switch result {
+                case .success(let ids):
+                    cart = ids
+                case .failure:
+                    failed = true
+                }
+                group.leave()
+            }
+        }
+
         group.notify(queue: stateQueue) { [weak self] in
             guard let self else { return }
             let received = loaded.compactMap { $0 }
@@ -92,7 +136,9 @@ final class CollectionPresenter {
                 if success {
                     self.state = .data
                     self.nfts = received
-                    self.view?.showNfts(received)
+                    self.likedIds = liked
+                    self.cartIds = cart
+                    self.view?.showNfts(received, likedIds: Set(liked), cartIds: Set(cart))
                     self.view?.setGridInteractionEnabled(true)
                 } else {
                     self.state = .failed
