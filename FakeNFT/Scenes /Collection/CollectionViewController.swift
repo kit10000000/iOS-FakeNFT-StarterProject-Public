@@ -98,6 +98,22 @@ final class CollectionViewController: UIViewController, CollectionView, LoadingV
         self.cartIds = cartIds
         collectionView.reloadData()
     }
+    
+    func updateNft(at index: Int, isLiked: Bool, isInCart: Bool) {
+        guard nfts.indices.contains(index) else { return }
+        let id = nfts[index].id
+        if isLiked {
+            likedIds.insert(id)
+        } else {
+            likedIds.remove(id)
+        }
+        if isInCart {
+            cartIds.insert(id)
+        } else {
+            cartIds.remove(id)
+        }
+        collectionView.reloadItems(at: [IndexPath(item: index, section: 0)])
+    }
 
     func openAuthorWebsite(_ url: URL) {
         let webViewController = AuthorWebViewController(url: url)

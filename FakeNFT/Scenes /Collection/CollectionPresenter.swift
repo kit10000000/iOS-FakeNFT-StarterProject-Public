@@ -14,6 +14,7 @@ protocol CollectionView: AnyObject {
     func setGridInteractionEnabled(_ isEnabled: Bool)
     func showCollection(_ header: CollectionHeaderModel)
     func showNfts(_ nfts: [Nft], likedIds: Set<String>, cartIds: Set<String>)
+    func updateNft(at index: Int, isLiked: Bool, isInCart: Bool)
     func openAuthorWebsite(_ url: URL)
     func openNft(with id: String)
 }
@@ -38,6 +39,7 @@ final class CollectionPresenter {
     private var cartIds: [String] = []
     private var state: State = .loading
     private var isOpening = false
+    private var isSavingLike = false
 
     init(collection: NftCollection, nftService: NftService, likesService: LikesService, orderService: CatalogOrderService) {
         self.collection = collection
@@ -170,9 +172,44 @@ final class CollectionPresenter {
     }
 
     func didTapLike(id: String) {
+        guard state == .data, !isSavingLike, let index = nfts.firstIndex(where: { $0.id == id }) else { return }
+        isSavingLike = true
+        let wasLiked = likedIds.contains(id)
+        if let current = likedIds.firstIndex(of: id) {
+            likedIds.remove(at: current)
+        } else {
+            likedIds.append(id)
+        }
+        let likesToSend = likedIds
+        likesService.saveLikes(likesToSend) { [weak self] result in
+            DispatchQueue.main.async {
+                guard let self else { return }
+                self.isSavingLike = false
+                switch result {
+                case .success(let profile):
+                    self.likedIds = profile.likes
+                    self.view?.updateNft(at: index, isLiked: profile.likes.contains(id), isInCart: self.cartIds.contains(id))
+                case .failure:
+                    self.restore(id, wasIncluded: wasLiked, in: &self.likedIds)
+                    self.view?.showError(self.makeErrorModel { [weak self] in
+                        self?.didTapLike(id: id)
+                    })
+                }
+            }
+        }
     }
 
     func didTapCart(id: String) {
+    }
+    
+    private func restore(_ id: String, wasIncluded: Bool, in list: inout [String]) {
+        if wasIncluded {
+            if !list.contains(id) {
+                list.append(id)
+            }
+        } else {
+            list.removeAll { $0 == id }
+        }
     }
 
     private func makeHeaderModel() -> CollectionHeaderModel {
