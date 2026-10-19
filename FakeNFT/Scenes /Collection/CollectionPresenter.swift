@@ -40,6 +40,7 @@ final class CollectionPresenter {
     private var state: State = .loading
     private var isOpening = false
     private var isSavingLike = false
+    private var isSavingCart = false
 
     init(collection: NftCollection, nftService: NftService, likesService: LikesService, orderService: CatalogOrderService) {
         self.collection = collection
@@ -200,6 +201,41 @@ final class CollectionPresenter {
     }
 
     func didTapCart(id: String) {
+        guard state == .data, !isSavingCart, let index = nfts.firstIndex(where: { $0.id == id }) else { return }
+        isSavingCart = true
+        orderService.loadNftIds { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .failure:
+                DispatchQueue.main.async {
+                    self.isSavingCart = false
+                    self.view?.showError(self.makeErrorModel { [weak self] in
+                        self?.didTapCart(id: id)
+                    })
+                }
+            case .success(var ids):
+                if let found = ids.firstIndex(of: id) {
+                    ids.remove(at: found)
+                } else {
+                    ids.append(id)
+                }
+                self.orderService.saveNftIds(ids) { [weak self] saveResult in
+                    DispatchQueue.main.async {
+                        guard let self else { return }
+                        self.isSavingCart = false
+                        switch saveResult {
+                        case .success(let saved):
+                            self.cartIds = saved
+                            self.view?.updateNft(at: index, isLiked: self.likedIds.contains(id), isInCart: saved.contains(id))
+                        case .failure:
+                            self.view?.showError(self.makeErrorModel { [weak self] in
+                                self?.didTapCart(id: id)
+                            })
+                        }
+                    }
+                }
+            }
+        }
     }
     
     private func restore(_ id: String, wasIncluded: Bool, in list: inout [String]) {
