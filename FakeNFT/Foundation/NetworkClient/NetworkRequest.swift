@@ -7,6 +7,11 @@ enum HttpMethod: String {
     case delete = "DELETE"
 }
 
+enum DtoValueType {
+    case dtoString(String)
+    case dtoArray([String])
+}
+
 protocol NetworkRequest {
     var endpoint: URL? { get }
     var httpMethod: HttpMethod { get }
@@ -14,7 +19,7 @@ protocol NetworkRequest {
 }
 
 protocol Dto {
-    func asDictionary() -> [String: String]
+    func asDictionary() -> [String: DtoValueType]
 }
 
 // default values
