@@ -122,11 +122,13 @@ struct DefaultNetworkClient: NetworkClient {
 
         if let dtoDictionary = request.dto?.asDictionary() {
             var urlComponents = URLComponents()
-            let queryItems = dtoDictionary.map { field in
-                URLQueryItem(
-                    name: field.key,
-                    value: field.value
-                    )
+            let queryItems = dtoDictionary.flatMap { field -> [URLQueryItem] in
+                switch field.value {
+                case .dtoString(let value):
+                    return [URLQueryItem(name: field.key, value: value)]
+                case .dtoArray(let values):
+                    return values.map { URLQueryItem(name: field.key, value: $0) }
+                }
             }
             urlComponents.queryItems = queryItems
             urlRequest.httpBody = urlComponents.query?.data(using: .utf8)
