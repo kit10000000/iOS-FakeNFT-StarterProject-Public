@@ -37,9 +37,10 @@ final class CartViewController: UIViewController {
     // MARK: - Properties
 
     internal lazy var activityIndicator = UIActivityIndicatorView()
+    weak var delegate: CartViewCellDelegate?
 
     // MARK: - Private Properties
-    weak var delegate: CartViewCellDelegate?
+
     private let presenter: CartPresenterProtocol?
 
     private lazy var tableView: UITableView = {
@@ -231,6 +232,7 @@ extension CartViewController: CartViewControllerProtocol {
     }
 
     func showEmptyState() {
+        tableView.reloadData()
         bottomPanel.isHidden = true
         emptyCartTextLabel.isHidden = false
         tableView.isHidden = true
@@ -280,6 +282,7 @@ extension CartViewController: UITableViewDataSource {
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: CartViewCell.reuseIdentifier, for: indexPath) as? CartViewCell,
             let model = presenter?.nftCartViewModelArray[indexPath.row]
+
         else { return UITableViewCell() }
         cell.delegate = self
         cell.configure(nft: model)
@@ -308,7 +311,6 @@ extension CartViewController: CartViewCellDelegate {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let model = presenter?.nftCartViewModelArray[indexPath.row]
         guard let image = model?.image else { return }
-
         let vc = CartDeleteViewController()
         vc.configure(image: image, nftId: indexPath.row)
         vc.delegate = self

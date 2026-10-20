@@ -25,5 +25,18 @@ final class OrderServiceMockImpl: OrderService {
             }
         }
     }
+
+    func sendOrderPutRequest(nfts: [String], completion: @escaping (Result<Order, Error>) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+            switch self.result {
+            case .success(let order):
+                let modifiedOrder = Order(id: order.id, nfts: nfts)
+                self.result = .success(modifiedOrder)
+                completion(.success(modifiedOrder))
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
 #endif

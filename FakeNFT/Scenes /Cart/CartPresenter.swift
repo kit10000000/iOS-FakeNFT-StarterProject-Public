@@ -73,6 +73,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     func viewWillAppear() {
         state = .loading
+        print(nfts)
     }
 
     func didTapPay() {
@@ -86,8 +87,25 @@ final class CartPresenterImpl: CartPresenterProtocol {
     }
 
     func didTapConfirmDelete(nftId: Int){
-        print("delete")
-        print (nftId)
+        view?.showLoading()
+        nfts.remove(at: nftId)
+        let nftsId = nfts.map { $0.id }
+
+        updateOrder(nfts: nftsId) { [weak self] result in
+            guard let self else { return }
+            switch result {
+            case .success(let order):
+                self.order = order
+                if order.nfts.isEmpty {
+                    state = .empty
+                    print("empty")
+                } else {
+                    self.loadNfts(ids: order.nfts)
+                }
+            case .failure(let error):
+                self.state = .failed(error)
+            }
+        }
     }
 
     // MARK: - Private Methods
@@ -179,5 +197,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
         case .name:
             nfts.sort(by: { $0.name < $1.name })
         }
+    }
+
+    private func updateOrder(nfts: [String], completion: @escaping (Result<Order, Error>)-> Void) {
+        orderService.sendOrderPutRequest(nfts: nfts, completion: completion)
     }
 }
