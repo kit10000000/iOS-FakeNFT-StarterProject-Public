@@ -21,6 +21,10 @@ final class CartViewCell: UITableViewCell {
         static let labelsToButtonSpacing: CGFloat = 8
     }
 
+    // MARK: - Properties
+
+    weak var delegate: CartViewCellDelegate?
+
     // MARK: - Private Properties
 
     private lazy var nftImageView: UIImageView = {
@@ -76,9 +80,11 @@ final class CartViewCell: UITableViewCell {
         button.tintColor = .segmentActive
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addAction(UIAction { [weak self] _ in
+            guard let self else { return }
             #if DEBUG
             print("delete from cart")
             #endif
+            delegate?.cartViewCellDidTapDelete(self)
         }, for: .touchUpInside)
         return button
     }()

@@ -15,6 +15,7 @@ protocol CartPresenterProtocol {
     func viewWillAppear()
     func didTapPay()
     func didSelectSort(option: CartSortOption)
+    func didTapConfirmDelete(nftId: Int)
 }
 
 // MARK: - State
@@ -82,6 +83,11 @@ final class CartPresenterImpl: CartPresenterProtocol {
         storage.sortOption = option
         sortNfts()
         view?.display()
+    }
+
+    func didTapConfirmDelete(nftId: Int){
+        print("delete")
+        print (nftId)
     }
 
     // MARK: - Private Methods

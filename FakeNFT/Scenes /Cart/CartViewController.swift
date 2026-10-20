@@ -13,6 +13,10 @@ protocol CartViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     func showEmptyState()
 }
 
+protocol CartViewCellDelegate: AnyObject {
+    func cartViewCellDidTapDelete(_ cell: CartViewCell)
+}
+
 final class CartViewController: UIViewController {
 
     // MARK: - Constants
@@ -35,7 +39,7 @@ final class CartViewController: UIViewController {
     internal lazy var activityIndicator = UIActivityIndicatorView()
 
     // MARK: - Private Properties
-
+    weak var delegate: CartViewCellDelegate?
     private let presenter: CartPresenterProtocol?
 
     private lazy var tableView: UITableView = {
@@ -277,6 +281,7 @@ extension CartViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: CartViewCell.reuseIdentifier, for: indexPath) as? CartViewCell,
             let model = presenter?.nftCartViewModelArray[indexPath.row]
         else { return UITableViewCell() }
+        cell.delegate = self
         cell.configure(nft: model)
         return cell
     }
@@ -293,5 +298,29 @@ extension CartViewController {
         }
         alert.addAction(UIAlertAction(title: NSLocalizedString("Common.close", comment: ""), style: .cancel))
         present(alert, animated: true)
+    }
+}
+
+// MARK: - CartViewCellDelegate
+
+extension CartViewController: CartViewCellDelegate {
+    func cartViewCellDidTapDelete(_ cell: CartViewCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        let model = presenter?.nftCartViewModelArray[indexPath.row]
+        guard let image = model?.image else { return }
+
+        let vc = CartDeleteViewController()
+        vc.configure(image: image, nftId: indexPath.row)
+        vc.delegate = self
+        vc.modalPresentationStyle = .overFullScreen
+        present(vc, animated: true)
+    }
+}
+
+// MARK: - CartDeleteViewControllerDelegate
+
+extension CartViewController: CartDeleteViewControllerDelegate {
+    func didConfirmDelete(nftId: Int) {
+        presenter?.didTapConfirmDelete(nftId: nftId)
     }
 }
