@@ -129,7 +129,9 @@ struct DefaultNetworkClient: NetworkClient {
                 case .dtoString(let value):
                     return [URLQueryItem(name: field.key, value: value)]
                 case .dtoArray(let values):
-                    return values.map { URLQueryItem(name: field.key, value: $0) }
+                    return values.isEmpty
+                        ? [URLQueryItem(name: field.key, value: "")]
+                        : values.map { URLQueryItem(name: field.key, value: $0) }
                 }
             }
             urlComponents.queryItems = queryItems
