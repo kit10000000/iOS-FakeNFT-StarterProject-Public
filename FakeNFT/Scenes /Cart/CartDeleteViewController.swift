@@ -13,21 +13,6 @@ protocol CartDeleteViewControllerDelegate: AnyObject {
 
 final class CartDeleteViewController: UIViewController {
 
-    // MARK: - Constants
-
-    private enum Constants {
-        static let nftImageSize: CGFloat = 108
-        static let confirmationLabelWidth: CGFloat = 180
-        static let buttonHeight: CGFloat = 44
-        static let stackViewWidth: CGFloat = 262
-        static let stackViewCenterYOffset: CGFloat = -40
-        static let cornerRadius: CGFloat = 16
-        static let buttonsSpacing: CGFloat = 2
-        static let stackSpacing: CGFloat = 10
-        static let imageToLabelSpacing: CGFloat = 12
-        static let labelToButtonsSpacing: CGFloat = 20
-    }
-
     // MARK: - Properties
 
     weak var delegate: CartDeleteViewControllerDelegate?
@@ -155,5 +140,22 @@ final class CartDeleteViewController: UIViewController {
             buttonStackView.heightAnchor.constraint(equalToConstant: Constants.buttonHeight),
             buttonStackView.widthAnchor.constraint(equalToConstant: Constants.stackViewWidth)
         ])
+    }
+}
+
+// MARK: - Constants
+
+private extension CartDeleteViewController {
+    enum Constants {
+        static let nftImageSize: CGFloat = 108
+        static let confirmationLabelWidth: CGFloat = 180
+        static let buttonHeight: CGFloat = 44
+        static let stackViewWidth: CGFloat = 262
+        static let stackViewCenterYOffset: CGFloat = -40
+        static let cornerRadius: CGFloat = 16
+        static let buttonsSpacing: CGFloat = 2
+        static let stackSpacing: CGFloat = 10
+        static let imageToLabelSpacing: CGFloat = 12
+        static let labelToButtonsSpacing: CGFloat = 20
     }
 }

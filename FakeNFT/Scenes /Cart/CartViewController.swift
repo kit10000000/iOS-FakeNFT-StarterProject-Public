@@ -19,21 +19,6 @@ protocol CartViewCellDelegate: AnyObject {
 
 final class CartViewController: UIViewController {
 
-    // MARK: - Constants
-
-    private enum Constants {
-        static let sideInset: CGFloat = 16
-        static let bottomPanelHeight: CGFloat = 76
-        static let labelsToButtonSpacing: CGFloat = 24
-        static let payButtonHeight: CGFloat = 44
-        static let payButtonMaxWidth: CGFloat = 240
-        static let loadingBackgroundSize: CGFloat = 60
-        static let rowHeight: CGFloat = 140
-        static let cornerRadius: CGFloat = 12
-        static let payButtonCornerRadius: CGFloat = 16
-        static let labelsStackSpacing: CGFloat = 2
-    }
-
     // MARK: - Properties
 
     internal lazy var activityIndicator = UIActivityIndicatorView()
@@ -329,3 +314,21 @@ extension CartViewController: CartDeleteViewControllerDelegate {
         presenter?.didTapConfirmDelete(nftId: nftId)
     }
 }
+
+// MARK: - Constants
+
+private extension CartViewController {
+    enum Constants {
+        static let sideInset: CGFloat = 16
+        static let bottomPanelHeight: CGFloat = 76
+        static let labelsToButtonSpacing: CGFloat = 24
+        static let payButtonHeight: CGFloat = 44
+        static let payButtonMaxWidth: CGFloat = 240
+        static let loadingBackgroundSize: CGFloat = 60
+        static let rowHeight: CGFloat = 140
+        static let cornerRadius: CGFloat = 12
+        static let payButtonCornerRadius: CGFloat = 16
+        static let labelsStackSpacing: CGFloat = 2
+    }
+}
+
