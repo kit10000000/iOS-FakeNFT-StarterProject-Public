@@ -104,15 +104,18 @@ struct DefaultNetworkClient: NetworkClient {
         
         urlRequest.addValue(RequestConstants.token, forHTTPHeaderField: "X-Practicum-Mobile-Token")
         
-        if let body = request.httpBody {
-            urlRequest.httpBody = body
-        } else if let dtoDictionary = request.dto?.asDictionary() {
+        if let dtoDictionary = request.dto?.asDictionary() {
             var urlComponents = URLComponents()
-            let queryItems = dtoDictionary.map { field in
-                URLQueryItem(
-                    name: field.key,
-                    value: field.value
-                )
+            let queryItems = dtoDictionary.flatMap { field -> [URLQueryItem] in
+                switch field.value {
+                case .dtoString(let value):
+                    return [URLQueryItem(name: field.key, value: value)]
+                case .dtoArray(let values):
+                    if values.isEmpty {
+                        return [URLQueryItem(name: field.key, value: "")]
+                    }
+                    return values.map { URLQueryItem(name: field.key, value: $0) }
+                }
             }
             urlComponents.queryItems = queryItems
             urlRequest.httpBody = urlComponents.query?.data(using: .utf8)

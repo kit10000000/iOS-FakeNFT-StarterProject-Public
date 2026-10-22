@@ -40,18 +40,18 @@ struct UserProfile: Decodable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        name = try container.decodeIfPresent(String.self, forKey: .name) ?? ""
-        avatar = try container.decodeIfPresent(String.self, forKey: .avatar) ?? ""
-        description = try container.decodeIfPresent(String.self, forKey: .description) ?? ""
-        website = try container.decodeIfPresent(String.self, forKey: .website) ?? ""
-        nfts = try container.decodeIfPresent([String].self, forKey: .nfts) ?? []
-        likes = try container.decodeIfPresent([String].self, forKey: .likes) ?? []
+        name = try container.decode(String.self, forKey: .name)
+        avatar = try container.decode(String.self, forKey: .avatar)
+        description = try container.decode(String.self, forKey: .description)
+        website = try container.decode(String.self, forKey: .website)
+        nfts = try container.decode([String].self, forKey: .nfts)
+        likes = try container.decode([String].self, forKey: .likes)
         if let stringId = try? container.decode(String.self, forKey: .id) {
             id = stringId
         } else if let intId = try? container.decode(Int.self, forKey: .id) {
             id = String(intId)
         } else {
-            id = "1"
+            throw DecodingError.dataCorruptedError(forKey: .id, in: container, debugDescription: "Profile id is missing")
         }
     }
 }

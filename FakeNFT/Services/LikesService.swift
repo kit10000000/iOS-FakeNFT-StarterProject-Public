@@ -32,44 +32,24 @@ final class LikesServiceImpl: LikesService {
 
     func saveLikes(_ likes: [String], completion: @escaping ProfileCompletion) {
         loadProfile { [weak self] result in
-            guard let self else {
-                completion(.failure(NetworkClientError.urlSessionError))
-                return
-            }
+            guard let self else { return }
             switch result {
             case .failure(let error):
                 completion(.failure(error))
             case .success(let profile):
-                let body = Self.profileBody(profile, likes: likes)
-                let request = UpdateProfileRequest(httpBody: body)
+                let dto = ProfileUpdateDto(
+                    name: profile.name,
+                    avatar: profile.avatar,
+                    description: profile.description,
+                    website: profile.website,
+                    nfts: profile.nfts,
+                    likes: likes
+                )
+                let request = UpdateProfileRequest(dto: dto)
                 self.networkClient.send(request: request, type: UserProfile.self, completionQueue: self.completionQueue) { saveResult in
                     completion(saveResult)
                 }
             }
         }
-    }
-
-    private static func profileBody(_ profile: UserProfile, likes: [String]) -> Data {
-        var items: [(String, String)] = [
-            ("name", profile.name),
-            ("avatar", profile.avatar),
-            ("description", profile.description),
-            ("website", profile.website)
-        ]
-        if profile.nfts.isEmpty {
-            items.append(("nfts", ""))
-        } else {
-            for id in profile.nfts {
-                items.append(("nfts", id))
-            }
-        }
-        if likes.isEmpty {
-            items.append(("likes", ""))
-        } else {
-            for id in likes {
-                items.append(("likes", id))
-            }
-        }
-        return FormURLEncoder.encode(items)
     }
 }

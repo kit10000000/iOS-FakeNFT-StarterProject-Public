@@ -12,7 +12,7 @@ struct CollectionHeaderModel {
     let cover: URL
     let name: String
     let authorName: String
-    let authorURL: String
+    let authorURL: URL?
     let description: String
 }
 
@@ -55,6 +55,7 @@ final class CollectionHeader: UICollectionReusableView {
     func setText(from model: CollectionHeaderModel) {
         nameLabel.text = model.name
         authorButton.setTitle(model.authorName, for: .normal)
+        authorButton.isEnabled = model.authorURL != nil
         descriptionLabel.text = model.description
     }
 
@@ -83,6 +84,7 @@ final class CollectionHeader: UICollectionReusableView {
 
         authorButton.titleLabel?.font = .bodyRegular
         authorButton.setTitleColor(.ypBlueUniversal, for: .normal)
+        authorButton.setTitleColor(.ypBlackUniversal, for: .disabled)
         authorButton.addTarget(self, action: #selector(authorButtonTapped), for: .touchUpInside)
         authorButton.contentHorizontalAlignment = .leading
 

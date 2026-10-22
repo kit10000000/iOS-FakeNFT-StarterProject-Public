@@ -24,7 +24,6 @@
 		0CFCB74B2A780EA80009A829 /* UIView+Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFCB74A2A780EA80009A829 /* UIView+Constraints.swift */; };
 		0CFCB74E2A7817DC0009A829 /* NftStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFCB74D2A7817DC0009A829 /* NftStorage.swift */; };
 		21AB288A3086014100C4EBCA /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB28893086014100C4EBCA /* UserProfile.swift */; };
-		21AB288C3086018600C4EBCA /* FormURLEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB288B3086018600C4EBCA /* FormURLEncoder.swift */; };
 		21AB288E308601B900C4EBCA /* ProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB288D308601B900C4EBCA /* ProfileRequest.swift */; };
 		21AB2890308601F100C4EBCA /* LikesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB288F308601F100C4EBCA /* LikesService.swift */; };
 		21AB2DC6308655F000C4EBCA /* CatalogOrderRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB2DC5308655F000C4EBCA /* CatalogOrderRequest.swift */; };
@@ -103,7 +102,6 @@
 		0CFCB74A2A780EA80009A829 /* UIView+Constraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Constraints.swift"; sourceTree = "<group>"; };
 		0CFCB74D2A7817DC0009A829 /* NftStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftStorage.swift; sourceTree = "<group>"; };
 		21AB28893086014100C4EBCA /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
-		21AB288B3086018600C4EBCA /* FormURLEncoder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormURLEncoder.swift; sourceTree = "<group>"; };
 		21AB288D308601B900C4EBCA /* ProfileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRequest.swift; sourceTree = "<group>"; };
 		21AB288F308601F100C4EBCA /* LikesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikesService.swift; sourceTree = "<group>"; };
 		21AB2DC5308655F000C4EBCA /* CatalogOrderRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogOrderRequest.swift; sourceTree = "<group>"; };
@@ -319,7 +317,6 @@
 				558E39E62C68CE0900FB86AC /* NftService.swift */,
 				0CFCB73F2A78002A0009A829 /* ExamplePutService.swift */,
 				21EA7C5E30820AF7007F7F3B /* CollectionService.swift */,
-				21AB288B3086018600C4EBCA /* FormURLEncoder.swift */,
 				21AB288F308601F100C4EBCA /* LikesService.swift */,
 				21AB2DC73086576300C4EBCA /* CatalogOrderService.swift */,
 			);
@@ -596,7 +593,6 @@
 				21EA679A307D0FC1007F7F3B /* CatalogCell.swift in Sources */,
 				558E39E72C68CE0A00FB86AC /* NftService.swift in Sources */,
 				21EA6796307CEF8F007F7F3B /* CatalogViewController.swift in Sources */,
-				21AB288C3086018600C4EBCA /* FormURLEncoder.swift in Sources */,
 				3F68069729CBBAF100B4F915 /* AppDelegate.swift in Sources */,
 				3F68069929CBBAF100B4F915 /* SceneDelegate.swift in Sources */,
 				0C79EE6C2A76DE2E00EE90EA /* ServicesAssemly.swift in Sources */,

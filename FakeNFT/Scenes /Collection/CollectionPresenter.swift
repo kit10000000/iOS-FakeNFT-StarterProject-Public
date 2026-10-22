@@ -160,7 +160,7 @@ final class CollectionPresenter {
 
     func didTapAuthor() {
         guard !isOpening else { return }
-        guard let url = URL(string: makeHeaderModel().authorURL) else { return }
+        guard let url = makeHeaderModel().authorURL else { return }
         guard let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" else { return }
         isOpening = true
         view?.openAuthorWebsite(url)
@@ -253,9 +253,16 @@ final class CollectionPresenter {
             cover: collection.cover,
             name: collection.name,
             authorName: collection.author,
-            authorURL: collection.author,
+            authorURL: authorURL(from: collection.author),
             description: collection.description
         )
+    }
+
+    private func authorURL(from author: String) -> URL? {
+        guard let url = URL(string: author), let scheme = url.scheme?.lowercased(), scheme == "http" || scheme == "https" else {
+            return nil
+        }
+        return url
     }
 
     private func makeErrorModel(retry: @escaping () -> Void) -> ErrorModel {

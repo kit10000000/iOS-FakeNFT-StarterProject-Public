@@ -19,9 +19,16 @@ struct GetCatalogOrderRequest: NetworkRequest {
     }
 }
 
+struct CatalogOrderUpdateDto: Dto {
+    let nfts: [String]
+
+    func asDictionary() -> [String: DtoValueType] {
+        ["nfts": .dtoArray(nfts)]
+    }
+}
+
 struct UpdateCatalogOrderRequest: NetworkRequest {
-    let httpBody: Data?
-    var dto: Dto? { nil }
+    let dto: Dto?
 
     var endpoint: URL? {
         URL(string: "\(RequestConstants.baseURL)/api/v1/orders/1")

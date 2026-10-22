@@ -36,14 +36,8 @@ final class CatalogOrderServiceImpl: CatalogOrderService {
     }
 
     func saveNftIds(_ ids: [String], completion: @escaping CatalogOrderCompletion) {
-        let items: [(String, String)]
-        if ids.isEmpty {
-            items = [("nfts", "")]
-        } else {
-            items = ids.map { ("nfts", $0) }
-        }
-        let body = FormURLEncoder.encode(items)
-        let request = UpdateCatalogOrderRequest(httpBody: body)
+        let dto = CatalogOrderUpdateDto(nfts: ids)
+        let request = UpdateCatalogOrderRequest(dto: dto)
         networkClient.send(request: request, type: CatalogOrderResponse.self, completionQueue: completionQueue) { result in
             switch result {
             case .success(let order):
