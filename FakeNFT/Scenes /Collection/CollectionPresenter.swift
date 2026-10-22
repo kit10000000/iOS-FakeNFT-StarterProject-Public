@@ -39,8 +39,7 @@ final class CollectionPresenter {
     private var cartIds: [String] = []
     private var state: State = .loading
     private var isOpening = false
-    private var isSavingLike = false
-    private var isSavingCart = false
+    private var pendingIds: Set<String> = []
 
     init(collection: NftCollection, nftService: NftService, likesService: LikesService, orderService: CatalogOrderService) {
         self.collection = collection
@@ -173,25 +172,27 @@ final class CollectionPresenter {
     }
 
     func didTapLike(id: String) {
-        guard state == .data, !isSavingLike, let index = nfts.firstIndex(where: { $0.id == id }) else { return }
-        isSavingLike = true
+        guard state == .data, !pendingIds.contains(id), let index = nfts.firstIndex(where: { $0.id == id }) else { return }
+        pendingIds.insert(id)
         let wasLiked = likedIds.contains(id)
         if let current = likedIds.firstIndex(of: id) {
             likedIds.remove(at: current)
         } else {
             likedIds.append(id)
         }
+        view?.updateNft(at: index, isLiked: !wasLiked, isInCart: cartIds.contains(id))
         let likesToSend = likedIds
         likesService.saveLikes(likesToSend) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
-                self.isSavingLike = false
+                self.pendingIds.remove(id)
                 switch result {
                 case .success(let profile):
                     self.likedIds = profile.likes
                     self.view?.updateNft(at: index, isLiked: profile.likes.contains(id), isInCart: self.cartIds.contains(id))
                 case .failure:
                     self.restore(id, wasIncluded: wasLiked, in: &self.likedIds)
+                    self.view?.updateNft(at: index, isLiked: wasLiked, isInCart: self.cartIds.contains(id))
                     self.view?.showError(self.makeErrorModel { [weak self] in
                         self?.didTapLike(id: id)
                     })
@@ -201,14 +202,23 @@ final class CollectionPresenter {
     }
 
     func didTapCart(id: String) {
-        guard state == .data, !isSavingCart, let index = nfts.firstIndex(where: { $0.id == id }) else { return }
-        isSavingCart = true
+        guard state == .data, !pendingIds.contains(id), let index = nfts.firstIndex(where: { $0.id == id }) else { return }
+        pendingIds.insert(id)
+        let wasInCart = cartIds.contains(id)
+        if let current = cartIds.firstIndex(of: id) {
+            cartIds.remove(at: current)
+        } else {
+            cartIds.append(id)
+        }
+        view?.updateNft(at: index, isLiked: likedIds.contains(id), isInCart: !wasInCart)
         orderService.loadNftIds { [weak self] result in
             guard let self else { return }
             switch result {
             case .failure:
                 DispatchQueue.main.async {
-                    self.isSavingCart = false
+                    self.pendingIds.remove(id)
+                    self.restore(id, wasIncluded: wasInCart, in: &self.cartIds)
+                    self.view?.updateNft(at: index, isLiked: self.likedIds.contains(id), isInCart: wasInCart)
                     self.view?.showError(self.makeErrorModel { [weak self] in
                         self?.didTapCart(id: id)
                     })
@@ -222,12 +232,14 @@ final class CollectionPresenter {
                 self.orderService.saveNftIds(ids) { [weak self] saveResult in
                     DispatchQueue.main.async {
                         guard let self else { return }
-                        self.isSavingCart = false
+                        self.pendingIds.remove(id)
                         switch saveResult {
                         case .success(let saved):
                             self.cartIds = saved
                             self.view?.updateNft(at: index, isLiked: self.likedIds.contains(id), isInCart: saved.contains(id))
                         case .failure:
+                            self.restore(id, wasIncluded: wasInCart, in: &self.cartIds)
+                            self.view?.updateNft(at: index, isLiked: self.likedIds.contains(id), isInCart: wasInCart)
                             self.view?.showError(self.makeErrorModel { [weak self] in
                                 self?.didTapCart(id: id)
                             })
