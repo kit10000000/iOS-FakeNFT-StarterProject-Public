@@ -27,12 +27,14 @@ final class CatalogPresenter {
     }
 
     private let collectionService: CollectionService
+    private let sortStorage: CatalogSortStorage
     private var collections: [NftCollection] = []
     private var state: State = .loading
     private var isOpeningCollection = false
 
-    init(collectionService: CollectionService) {
+    init(collectionService: CollectionService, sortStorage: CatalogSortStorage) {
         self.collectionService = collectionService
+        self.sortStorage = sortStorage
     }
 
     func viewDidLoad() {
@@ -47,12 +49,13 @@ final class CatalogPresenter {
             guard let self else { return }
             switch result {
             case .success(let collections):
+                let sorted = self.sorted(collections)
                 DispatchQueue.main.async {
-                    self.collections = collections
+                    self.collections = sorted
                     self.state = .data
                     self.view?.hideLoading()
                     self.view?.setInteractionEnabled(true)
-                    self.view?.showCollections(collections)
+                    self.view?.showCollections(sorted)
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
@@ -79,13 +82,24 @@ final class CatalogPresenter {
     }
 
     func sortByName() {
-        collections.sort { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        sortStorage.sort = .byName
+        collections = sorted(collections)
         view?.showCollections(collections)
     }
 
     func sortByNftCount() {
-        collections.sort { $0.nfts.count > $1.nfts.count }
+        sortStorage.sort = .byNftCount
+        collections = sorted(collections)
         view?.showCollections(collections)
+    }
+
+    private func sorted(_ collections: [NftCollection]) -> [NftCollection] {
+        switch sortStorage.sort {
+        case .byName:
+            return collections.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+        case .byNftCount:
+            return collections.sorted { $0.nfts.count > $1.nfts.count }
+        }
     }
 
     private func makeErrorModel(_ error: Error, retry: @escaping () -> Void) -> ErrorModel {

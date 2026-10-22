@@ -29,4 +29,8 @@ final class ServicesAssembly {
     var catalogOrderService: CatalogOrderService {
         CatalogOrderServiceImpl(networkClient: networkClient)
     }
+    
+    var catalogSortStorage: CatalogSortStorage {
+        CatalogSortStorageImpl()
+    }
 }

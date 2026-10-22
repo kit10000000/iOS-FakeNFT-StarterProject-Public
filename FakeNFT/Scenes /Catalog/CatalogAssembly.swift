@@ -16,7 +16,7 @@ final class CatalogAssembly {
     }
     
     func build() -> UIViewController {
-        let presenter = CatalogPresenter(collectionService: servicesAssembly.collectionService)
+        let presenter = CatalogPresenter(collectionService: servicesAssembly.collectionService, sortStorage: servicesAssembly.catalogSortStorage)
         let viewController = CatalogViewController(presenter: presenter, servicesAssembly: servicesAssembly)
         presenter.view = viewController
         return viewController
