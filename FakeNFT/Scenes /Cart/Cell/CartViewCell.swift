@@ -13,13 +13,9 @@ final class CartViewCell: UITableViewCell {
 
     static let reuseIdentifier = "CartViewCell"
 
-    private enum Constants {
-        static let sideInset: CGFloat = 16
-        static let imageSize: CGFloat = 108
-        static let deleteButtonSize: CGFloat = 40
-        static let imageToLabelsSpacing: CGFloat = 20
-        static let labelsToButtonSpacing: CGFloat = 8
-    }
+    // MARK: - Properties
+
+    weak var delegate: CartViewCellDelegate?
 
     // MARK: - Private Properties
 
@@ -76,9 +72,10 @@ final class CartViewCell: UITableViewCell {
         button.tintColor = .segmentActive
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addAction(UIAction { [weak self] _ in
-            #if DEBUG
-            print("delete from cart")
-            #endif
+            guard let self else {
+                return
+            }
+            delegate?.cartViewCellDidTapDelete(self)
         }, for: .touchUpInside)
         return button
     }()
@@ -122,5 +119,17 @@ final class CartViewCell: UITableViewCell {
         let currency = String(format: NSLocalizedString("Cart.currency.ETH", comment: ""))
         priceLabel.text = String(format: "%.2f \(currency)", nft.price)
         ratingView.configure(rating: nft.rating)
+    }
+}
+
+// MARK: - Constants
+
+private extension CartViewCell {
+    enum Constants {
+        static let sideInset: CGFloat = 16
+        static let imageSize: CGFloat = 108
+        static let deleteButtonSize: CGFloat = 40
+        static let imageToLabelsSpacing: CGFloat = 20
+        static let labelsToButtonSpacing: CGFloat = 8
     }
 }

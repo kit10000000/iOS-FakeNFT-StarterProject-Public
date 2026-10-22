@@ -14,6 +14,8 @@ protocol CartPresenterProtocol {
     var total: Double? { get }
     func viewWillAppear()
     func didTapPay()
+    func didSelectSort(option: CartSortOption)
+    func didTapConfirmDelete(nftId: Int)
 }
 
 // MARK: - State
@@ -51,6 +53,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     private let orderService: OrderService
     private let nftService: NftService
+    private var storage: CartStorageProtocol
 
     private var state = CartState.initial {
         didSet {
@@ -60,9 +63,10 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     // MARK: - Initializers
 
-    init(orderService: OrderService, nftService: NftService) {
+    init(orderService: OrderService, nftService: NftService, storage: CartStorageProtocol) {
         self.orderService = orderService
         self.nftService = nftService
+        self.storage = storage
     }
 
     // MARK: - Methods
@@ -72,7 +76,35 @@ final class CartPresenterImpl: CartPresenterProtocol {
     }
 
     func didTapPay() {
-        print("lets pay")
+    }
+
+    func didSelectSort(option: CartSortOption) {
+        storage.sortOption = option
+        sortNfts()
+        view?.display()
+    }
+
+    func didTapConfirmDelete(nftId: Int) {
+        view?.showLoading()
+        nfts.remove(at: nftId)
+        let nftsId = nfts.map { $0.id }
+
+        updateOrder(nfts: nftsId) { [weak self] result in
+            guard let self else {
+                return
+            }
+            switch result {
+            case .success(let order):
+                self.order = order
+                if order.nfts.isEmpty {
+                    state = .empty
+                } else {
+                    self.loadNfts(ids: order.nfts)
+                }
+            case .failure(let error):
+                self.state = .failed(error)
+            }
+        }
     }
 
     // MARK: - Private Methods
@@ -99,7 +131,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     private func loadOrder() {
         orderService.getOrder(id: "1") { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             switch result {
             case .success(let order):
                 self.order = order
@@ -148,9 +182,27 @@ final class CartPresenterImpl: CartPresenterProtocol {
         }
 
         group.notify(queue: .main) { [weak self] in
-            guard let self, let order = self.order else { return }
+            guard let self, let order = self.order else {
+                return
+            }
             self.nfts = ids.compactMap { loaded[$0] }
+            sortNfts()
             self.state = .data(order)
         }
+    }
+
+    private func sortNfts() {
+        switch storage.sortOption {
+        case .price:
+            nfts.sort(by: { $0.price < $1.price })
+        case .rating:
+            nfts.sort(by: { $0.rating < $1.rating })
+        case .name:
+            nfts.sort(by: { $0.name < $1.name })
+        }
+    }
+
+    private func updateOrder(nfts: [String], completion: @escaping (Result<Order, Error>) -> Void) {
+        orderService.sendOrderPutRequest(nfts: nfts, completion: completion)
     }
 }

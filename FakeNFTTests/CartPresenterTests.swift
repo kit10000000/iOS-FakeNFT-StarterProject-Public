@@ -5,7 +5,6 @@
 //  Created by Ekaterina on 15.10.2026.
 //
 
-
 import XCTest
 @testable import FakeNFT
 
@@ -15,6 +14,7 @@ final class CartPresenterTests: XCTestCase {
     private var nftService: NftServiceStub!
     private var presenter: CartPresenterImpl!
     private var view: CartViewControllerSpy!
+    private var storage: CartStorageStub!
 
     override func setUp() {
         super.setUp()
@@ -28,7 +28,13 @@ final class CartPresenterTests: XCTestCase {
             "2": Nft(id: "2", name: "Second", images: [], rating: 5, price: 3, description: "", author: "b")
         ]
 
-        presenter = CartPresenterImpl(orderService: orderService, nftService: nftService)
+        storage = CartStorageStub()
+
+        presenter = CartPresenterImpl(
+            orderService: orderService,
+            nftService: nftService,
+            storage: storage
+        )
 
         view = CartViewControllerSpy()
         presenter.view = view
@@ -77,5 +83,57 @@ final class CartPresenterTests: XCTestCase {
 
         // Then
         XCTAssertTrue(view.showErrorCalled)
+    }
+
+    func testSortByPrice() {
+        // Given
+        storage.sortOption = .price
+        let exp = expectation(description: "display")
+        view.onEvent = { exp.fulfill() }
+
+        // When
+        presenter.viewWillAppear()
+
+        // Then
+        wait(for: [exp], timeout: 1)
+        XCTAssertTrue(presenter.nftCartViewModelArray.first?.price == 2)  // дешёвый первый
+    }
+
+    func testDeleteReducesCount() {
+        // Given
+        let loadExp = expectation(description: "loaded")
+        view.onEvent = { loadExp.fulfill() }
+        presenter.viewWillAppear()
+        wait(for: [loadExp], timeout: 1)
+
+        let deleteExp = expectation(description: "deleted")
+        view.onEvent = { deleteExp.fulfill() }
+
+        // When
+        presenter.didTapConfirmDelete(nftId: 0)
+
+        // Then
+        wait(for: [deleteExp], timeout: 1)
+        XCTAssertTrue(presenter.nftCartViewModelArray.count == 1)
+    }
+
+    func testDeleteLastShowsEmpty() {
+        // Given
+        orderService.result = .success(Order(id: "1", nfts: ["1"]))
+        let loadExp = expectation(description: "loaded")
+        view.onEvent = { loadExp.fulfill() }
+        presenter.viewWillAppear()
+        wait(for: [loadExp], timeout: 1)
+
+        let deleteExp = expectation(description: "deleted")
+        view.onEvent = { deleteExp.fulfill() }
+
+        // When
+        presenter.didTapConfirmDelete(nftId: 0)
+
+        // Then
+        wait(for: [deleteExp], timeout: 1)
+        XCTAssertTrue(view.showEmptyStateCalled)
+        XCTAssertTrue(presenter.nftCartViewModelArray.isEmpty)
     }
 }

@@ -5,7 +5,6 @@
 //  Created by Ekaterina on 15.10.2026.
 //
 
-
 import UIKit
 @testable import FakeNFT
 

@@ -13,26 +13,16 @@ protocol CartViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     func showEmptyState()
 }
 
+protocol CartViewCellDelegate: AnyObject {
+    func cartViewCellDidTapDelete(_ cell: CartViewCell)
+}
+
 final class CartViewController: UIViewController {
-
-    // MARK: - Constants
-
-    private enum Constants {
-        static let sideInset: CGFloat = 16
-        static let bottomPanelHeight: CGFloat = 76
-        static let labelsToButtonSpacing: CGFloat = 24
-        static let payButtonHeight: CGFloat = 44
-        static let payButtonMaxWidth: CGFloat = 240
-        static let loadingBackgroundSize: CGFloat = 60
-        static let rowHeight: CGFloat = 140
-        static let cornerRadius: CGFloat = 12
-        static let payButtonCornerRadius: CGFloat = 16
-        static let labelsStackSpacing: CGFloat = 2
-    }
 
     // MARK: - Properties
 
     internal lazy var activityIndicator = UIActivityIndicatorView()
+    weak var delegate: CartViewCellDelegate?
 
     // MARK: - Private Properties
 
@@ -113,6 +103,16 @@ final class CartViewController: UIViewController {
         return view
     }()
 
+    private lazy var sortButton: UIBarButtonItem = {
+        let button = UIBarButtonItem()
+        button.tintColor = .ypBlack
+        let action = UIAction(image: UIImage(resource: .sortIcon)) { [weak self] _ in
+            self?.confirmSortOptions { option in self?.presenter?.didSelectSort(option: option) }
+        }
+        button.primaryAction = action
+        return button
+    }()
+
     private var isFirstLoad = true
 
     // MARK: - Initializers
@@ -141,6 +141,9 @@ final class CartViewController: UIViewController {
     // MARK: - Private Methods
 
     private func setupLayout() {
+
+        navigationItem.rightBarButtonItem = sortButton
+
         bottomPanel.addSubview(labelsStack)
         bottomPanel.addSubview(payButton)
 
@@ -214,6 +217,7 @@ extension CartViewController: CartViewControllerProtocol {
     }
 
     func showEmptyState() {
+        tableView.reloadData()
         bottomPanel.isHidden = true
         emptyCartTextLabel.isHidden = false
         tableView.isHidden = true
@@ -223,12 +227,14 @@ extension CartViewController: CartViewControllerProtocol {
         let hasLoadedItems = (presenter?.nftCartViewModelArray.count ?? 0) > 0
         loadingBackgroundView.isHidden = isFirstLoad || !hasLoadedItems
         bottomPanel.isHidden = isFirstLoad || !hasLoadedItems
+        sortButton.isHidden = isFirstLoad || !hasLoadedItems
         activityIndicator.startAnimating()
         isFirstLoad = false
         emptyCartTextLabel.isHidden = true
         tableView.isUserInteractionEnabled = false
         payButton.isEnabled = false
         tableView.isHidden = false
+        sortButton.isEnabled = false
     }
 
     func hideLoading() {
@@ -236,8 +242,9 @@ extension CartViewController: CartViewControllerProtocol {
         tableView.isUserInteractionEnabled = true
         payButton.isEnabled = true
         loadingBackgroundView.isHidden = true
+        sortButton.isHidden = false
+        sortButton.isEnabled = true
     }
-
 
 }
 
@@ -261,7 +268,67 @@ extension CartViewController: UITableViewDataSource {
             let cell = tableView.dequeueReusableCell(withIdentifier: CartViewCell.reuseIdentifier, for: indexPath) as? CartViewCell,
             let model = presenter?.nftCartViewModelArray[indexPath.row]
         else { return UITableViewCell() }
+        cell.delegate = self
         cell.configure(nft: model)
         return cell
     }
 }
+
+// MARK: - Sort
+
+extension CartViewController {
+    func confirmSortOptions(onConfirm: @escaping (_ option: CartSortOption) -> Void) {
+        let alert = UIAlertController(title: nil, message: NSLocalizedString("Common.sort", comment: ""), preferredStyle: .actionSheet)
+
+        CartSortOption.allCases.forEach { option in
+            alert.addAction(UIAlertAction(title: option.title, style: .default) { _ in onConfirm(option) })
+        }
+        alert.addAction(UIAlertAction(title: NSLocalizedString("Common.close", comment: ""), style: .cancel))
+        present(alert, animated: true)
+    }
+}
+
+// MARK: - CartViewCellDelegate
+
+extension CartViewController: CartViewCellDelegate {
+    func cartViewCellDidTapDelete(_ cell: CartViewCell) {
+        guard let indexPath = tableView.indexPath(for: cell) else {
+            return
+        }
+        let model = presenter?.nftCartViewModelArray[indexPath.row]
+        guard let image = model?.image else {
+            return
+        }
+        let vc = CartDeleteViewController()
+        vc.configure(image: image, nftId: indexPath.row)
+        vc.delegate = self
+        vc.modalPresentationStyle = .overFullScreen
+        present(vc, animated: true)
+    }
+}
+
+// MARK: - CartDeleteViewControllerDelegate
+
+extension CartViewController: CartDeleteViewControllerDelegate {
+    func didConfirmDelete(nftId: Int) {
+        presenter?.didTapConfirmDelete(nftId: nftId)
+    }
+}
+
+// MARK: - Constants
+
+private extension CartViewController {
+    enum Constants {
+        static let sideInset: CGFloat = 16
+        static let bottomPanelHeight: CGFloat = 76
+        static let labelsToButtonSpacing: CGFloat = 24
+        static let payButtonHeight: CGFloat = 44
+        static let payButtonMaxWidth: CGFloat = 240
+        static let loadingBackgroundSize: CGFloat = 60
+        static let rowHeight: CGFloat = 140
+        static let cornerRadius: CGFloat = 12
+        static let payButtonCornerRadius: CGFloat = 16
+        static let labelsStackSpacing: CGFloat = 2
+    }
+}
+

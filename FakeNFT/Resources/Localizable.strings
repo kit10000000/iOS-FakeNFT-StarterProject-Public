@@ -6,8 +6,16 @@
 "Cart.empty" = "Корзина пуста";
 "Cart.count" = "%d NFT";
 "Cart.currency.ETH" = "ETH";
+"Cart.sort.price" = "По цене";
+"Cart.sort.rating" = "По рейтингу";
+"Cart.sort.name" = "По названию";
+"Cart.delete" = "Удалить";
+"Cart.return" = "Вернуться";
+"Cart.confirmation" = "Вы уверены, что хотите удалить объект из корзины?";
 "Error.network" = "Произошла ошибка сети";
 "Error.unknown" = "Произошла неизвестная ошибка";
 "Error.repeat" = "Повторить";
 "Error.title" = "Ошибка";
 "Error.cancel" = "Отмена";
+"Common.sort" = "Сортировка";
+"Common.close" = "Закрыть";
