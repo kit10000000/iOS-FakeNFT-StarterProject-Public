@@ -17,7 +17,7 @@ final class OrderServiceMockImpl: OrderService {
     }
 
     func getOrder(id: String, completion: @escaping (Result<Order, Error>) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Constants.mockDelay) {
             switch self.result {
             case .success(let order):
                 completion(.success(order))
@@ -28,7 +28,7 @@ final class OrderServiceMockImpl: OrderService {
     }
 
     func sendOrderPutRequest(nfts: [String], completion: @escaping (Result<Order, Error>) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Constants.mockDelay) {
             switch self.result {
             case .success(let order):
                 let modifiedOrder = Order(id: order.id, nfts: nfts)
@@ -40,4 +40,11 @@ final class OrderServiceMockImpl: OrderService {
         }
     }
 }
+
+private extension OrderServiceMockImpl {
+    enum Constants {
+        static let mockDelay: TimeInterval = 1.5
+    }
+}
 #endif
+
