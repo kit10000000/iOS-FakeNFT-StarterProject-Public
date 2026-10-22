@@ -11,7 +11,7 @@ protocol OrderService {
     func getOrder(id: String, completion: @escaping (Result<Order, Error>) -> Void)
     func sendOrderPutRequest(
         nfts: [String],
-        completion: @escaping (Result<Order, Error>)-> Void
+        completion: @escaping (Result<Order, Error>) -> Void
     )
 }
 
@@ -37,7 +37,7 @@ final class OrderServiceImpl: OrderService {
 
     func sendOrderPutRequest(
         nfts: [String],
-        completion: @escaping (Result<Order, Error>)-> Void
+        completion: @escaping (Result<Order, Error>) -> Void
     ) {
         let dto = OrderPutDtoObject(nfts: nfts)
         let request = OrderPutRequest(dto: dto)

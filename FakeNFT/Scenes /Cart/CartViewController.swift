@@ -282,7 +282,6 @@ extension CartViewController: UITableViewDataSource {
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: CartViewCell.reuseIdentifier, for: indexPath) as? CartViewCell,
             let model = presenter?.nftCartViewModelArray[indexPath.row]
-
         else { return UITableViewCell() }
         cell.delegate = self
         cell.configure(nft: model)
@@ -308,9 +307,13 @@ extension CartViewController {
 
 extension CartViewController: CartViewCellDelegate {
     func cartViewCellDidTapDelete(_ cell: CartViewCell) {
-        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        guard let indexPath = tableView.indexPath(for: cell) else {
+            return
+        }
         let model = presenter?.nftCartViewModelArray[indexPath.row]
-        guard let image = model?.image else { return }
+        guard let image = model?.image else {
+            return
+        }
         let vc = CartDeleteViewController()
         vc.configure(image: image, nftId: indexPath.row)
         vc.delegate = self

@@ -15,7 +15,6 @@ enum CartSortOption: String, CaseIterable {
         case .price: return NSLocalizedString("Cart.sort.price", comment: "")
         case .rating: return NSLocalizedString("Cart.sort.rating", comment: "")
         case .name: return NSLocalizedString("Cart.sort.name", comment: "")
-
         }
     }
 }

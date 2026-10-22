@@ -60,7 +60,9 @@ final class CartDeleteViewController: UIViewController {
         button.backgroundColor = .segmentActive
         button.layer.cornerRadius = Constants.cornerRadius
         button.addAction(UIAction { [weak self] _ in
-            guard let self, let nftId = self.nftId else { return }
+            guard let self, let nftId = self.nftId else {
+                return
+            }
             self.delegate?.didConfirmDelete(nftId: nftId)
             self.dismiss(animated: true)
         }, for: .touchUpInside)
@@ -75,7 +77,9 @@ final class CartDeleteViewController: UIViewController {
         button.backgroundColor = .segmentActive
         button.layer.cornerRadius = Constants.cornerRadius
         button.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             self.dismiss(animated: true)
         }, for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

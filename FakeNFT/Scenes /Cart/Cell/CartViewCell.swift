@@ -80,10 +80,9 @@ final class CartViewCell: UITableViewCell {
         button.tintColor = .segmentActive
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addAction(UIAction { [weak self] _ in
-            guard let self else { return }
-            #if DEBUG
-            print("delete from cart")
-            #endif
+            guard let self else {
+                return
+            }
             delegate?.cartViewCellDidTapDelete(self)
         }, for: .touchUpInside)
         return button

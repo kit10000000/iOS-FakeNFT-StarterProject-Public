@@ -60,7 +60,9 @@ struct DefaultNetworkClient: NetworkClient {
                 onResponse(result)
             }
         }
-        guard let urlRequest = create(request: request) else { return nil }
+        guard let urlRequest = create(request: request) else {
+            return nil
+        }
 
         let task = session.dataTask(with: urlRequest) { data, response, error in
             guard let response = response as? HTTPURLResponse else {

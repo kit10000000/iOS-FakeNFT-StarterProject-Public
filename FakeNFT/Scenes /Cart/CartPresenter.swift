@@ -73,11 +73,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     func viewWillAppear() {
         state = .loading
-        print(nfts)
     }
 
     func didTapPay() {
-        print("lets pay")
     }
 
     func didSelectSort(option: CartSortOption) {
@@ -86,19 +84,20 @@ final class CartPresenterImpl: CartPresenterProtocol {
         view?.display()
     }
 
-    func didTapConfirmDelete(nftId: Int){
+    func didTapConfirmDelete(nftId: Int) {
         view?.showLoading()
         nfts.remove(at: nftId)
         let nftsId = nfts.map { $0.id }
 
         updateOrder(nfts: nftsId) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             switch result {
             case .success(let order):
                 self.order = order
                 if order.nfts.isEmpty {
                     state = .empty
-                    print("empty")
                 } else {
                     self.loadNfts(ids: order.nfts)
                 }
@@ -132,7 +131,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     private func loadOrder() {
         orderService.getOrder(id: "1") { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                return
+            }
             switch result {
             case .success(let order):
                 self.order = order
@@ -181,7 +182,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
         }
 
         group.notify(queue: .main) { [weak self] in
-            guard let self, let order = self.order else { return }
+            guard let self, let order = self.order else {
+                return
+            }
             self.nfts = ids.compactMap { loaded[$0] }
             sortNfts()
             self.state = .data(order)
@@ -199,7 +202,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
         }
     }
 
-    private func updateOrder(nfts: [String], completion: @escaping (Result<Order, Error>)-> Void) {
+    private func updateOrder(nfts: [String], completion: @escaping (Result<Order, Error>) -> Void) {
         orderService.sendOrderPutRequest(nfts: nfts, completion: completion)
     }
 }
