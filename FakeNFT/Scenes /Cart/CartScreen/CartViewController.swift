@@ -11,6 +11,7 @@ import ProgressHUD
 protocol CartViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     func display()
     func showEmptyState()
+    func showPaymentScreen()
 }
 
 protocol CartViewCellDelegate: AnyObject {
@@ -23,6 +24,7 @@ final class CartViewController: UIViewController {
 
     internal lazy var activityIndicator = UIActivityIndicatorView()
     weak var delegate: CartViewCellDelegate?
+    var makePaymentVC: (() -> UIViewController)?
 
     // MARK: - Private Properties
 
@@ -143,6 +145,8 @@ final class CartViewController: UIViewController {
     private func setupLayout() {
 
         navigationItem.rightBarButtonItem = sortButton
+        navigationItem.backButtonDisplayMode = .minimal
+        navigationController?.navigationBar.tintColor = .ypBlack
 
         bottomPanel.addSubview(labelsStack)
         bottomPanel.addSubview(payButton)
@@ -244,6 +248,13 @@ extension CartViewController: CartViewControllerProtocol {
         loadingBackgroundView.isHidden = true
         sortButton.isHidden = false
         sortButton.isEnabled = true
+    }
+
+    func showPaymentScreen() {
+        guard let paymentVC = makePaymentVC?() else {
+            return
+        }
+        navigationController?.pushViewController(paymentVC, animated: false)
     }
 
 }

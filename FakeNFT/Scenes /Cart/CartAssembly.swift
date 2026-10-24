@@ -22,7 +22,9 @@ public final class CartAssembly {
             storage: servicesAssembler.cartStorage
         )
         let viewController = CartViewController(presenter: presenter)
+        viewController.makePaymentVC = { PaymentAssembly(servicesAssembler: self.servicesAssembler).build() }
         presenter.view = viewController
+
         return viewController
     }
 }

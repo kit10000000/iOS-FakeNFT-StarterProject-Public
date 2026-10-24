@@ -9,12 +9,13 @@ import Foundation
 
 protocol PaymentPresenterProtocol {
     func viewDidLoad()
+    var currencyViewModelArray: [Currency] { get }
 }
 
 // MARK: - State
 
 enum PaymentScreenState {
-    case initial, loading, failed(Error), data([Currency])
+    case initial, loading, failed(Error), data
 }
 
 final class PaymentPresenterImpl: PaymentPresenterProtocol {
@@ -24,6 +25,13 @@ final class PaymentPresenterImpl: PaymentPresenterProtocol {
     weak var view: PaymentViewControllerProtocol?
 
     // MARK: - Private Properties
+    private(set) var currencyViewModelArray: [Currency] = []
+
+    private var currencyList: [Currency] = [] {
+        didSet {
+            currencyViewModelArray = currencyList
+        }
+    }
 
     private var state = PaymentScreenState.initial {
         didSet {
@@ -55,12 +63,30 @@ final class PaymentPresenterImpl: PaymentPresenterProtocol {
             assertionFailure("can't move to initial state")
         case .loading:
             view?.showLoading()
+            loadCurrencies()
         case .data:
             view?.hideLoading()
+            view?.display()
         case .failed(let error):
             let errorModel = makeErrorModel(error)
             view?.hideLoading()
             view?.showError(errorModel)
+        }
+    }
+
+    private func loadCurrencies() {
+        currencyService.getCurrencies { [weak self] result in
+            guard let self else {
+                return
+            }
+            switch result {
+            case .success(let currencies):
+                print(currencies)
+                self.currencyList = currencies
+                state = .data
+            case .failure(let error):
+                self.state = .failed(error)
+            }
         }
     }
 

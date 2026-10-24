@@ -76,6 +76,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
     }
 
     func didTapPay() {
+        view?.showPaymentScreen()
     }
 
     func didSelectSort(option: CartSortOption) {

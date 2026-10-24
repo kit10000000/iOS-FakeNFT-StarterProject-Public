@@ -7,7 +7,7 @@
 
 import UIKit
 
-public final class PayemntAssembly {
+public final class PaymentAssembly {
 
     private let servicesAssembler: ServicesAssembly
 

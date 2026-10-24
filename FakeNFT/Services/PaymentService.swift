@@ -19,7 +19,6 @@ final class PaymentServiceImpl: PaymentService {
         self.networkClient = networkClient
     }
 
-
     func getPayment(currencyId: String, completion: @escaping (Result<Payment, Error>) -> Void) {
         let request = PaymentRequest(currencyId: currencyId)
         networkClient.send(request: request, type: Payment.self) { result in
