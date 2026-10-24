@@ -20,9 +20,15 @@ final class NftServiceMockImpl: NftService {
             description: "",
             author: ""
         )
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Constants.mockDelay) {
             completion(.success(nft))
         }
+    }
+}
+
+private extension NftServiceMockImpl {
+    enum Constants {
+        static let mockDelay: TimeInterval = 0.3
     }
 }
 #endif
