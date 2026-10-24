@@ -42,4 +42,13 @@ final class ServicesAssembly {
     var cartStorage: CartStorage {
         CartStorage()
     }
+
+    var CurrencyService: CurrencyService {
+        useMock ?
+            CurrencyServiceMockImpl(result: .success(
+                Currency.mockList
+            ))
+        :
+            CurrencyServiceImpl(networkClient: networkClient)
+    }
 }
