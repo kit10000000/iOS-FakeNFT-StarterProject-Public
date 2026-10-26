@@ -29,6 +29,8 @@
 		21AB2DC6308655F000C4EBCA /* CatalogOrderRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB2DC5308655F000C4EBCA /* CatalogOrderRequest.swift */; };
 		21AB2DC83086576300C4EBCA /* CatalogOrderService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB2DC73086576300C4EBCA /* CatalogOrderService.swift */; };
 		21AB2F86308A206200C4EBCA /* CatalogSortStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB2F85308A206200C4EBCA /* CatalogSortStorage.swift */; };
+		21AB2F88308A506300C4EBCA /* CatalogPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB2F87308A506300C4EBCA /* CatalogPresenterTests.swift */; };
+		21AB2F8A308F3EF600C4EBCA /* CollectionPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB2F89308F3EF600C4EBCA /* CollectionPresenterTests.swift */; };
 		21EA6792307CE23F007F7F3B /* NftCollection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21EA6791307CE23F007F7F3B /* NftCollection.swift */; };
 		21EA6794307CE6A1007F7F3B /* CatalogPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21EA6793307CE6A1007F7F3B /* CatalogPresenter.swift */; };
 		21EA6796307CEF8F007F7F3B /* CatalogViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21EA6795307CEF8F007F7F3B /* CatalogViewController.swift */; };
@@ -108,6 +110,8 @@
 		21AB2DC5308655F000C4EBCA /* CatalogOrderRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogOrderRequest.swift; sourceTree = "<group>"; };
 		21AB2DC73086576300C4EBCA /* CatalogOrderService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogOrderService.swift; sourceTree = "<group>"; };
 		21AB2F85308A206200C4EBCA /* CatalogSortStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogSortStorage.swift; sourceTree = "<group>"; };
+		21AB2F87308A506300C4EBCA /* CatalogPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPresenterTests.swift; sourceTree = "<group>"; };
+		21AB2F89308F3EF600C4EBCA /* CollectionPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CollectionPresenterTests.swift; sourceTree = "<group>"; };
 		21EA6791307CE23F007F7F3B /* NftCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftCollection.swift; sourceTree = "<group>"; };
 		21EA6793307CE6A1007F7F3B /* CatalogPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogPresenter.swift; sourceTree = "<group>"; };
 		21EA6795307CEF8F007F7F3B /* CatalogViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CatalogViewController.swift; sourceTree = "<group>"; };
@@ -299,6 +303,8 @@
 			isa = PBXGroup;
 			children = (
 				3F6806AD29CBBAF200B4F915 /* ExampleUnitTests.swift */,
+				21AB2F87308A506300C4EBCA /* CatalogPresenterTests.swift */,
+				21AB2F89308F3EF600C4EBCA /* CollectionPresenterTests.swift */,
 			);
 			path = FakeNFTTests;
 			sourceTree = "<group>";
@@ -628,6 +634,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				21AB2F88308A506300C4EBCA /* CatalogPresenterTests.swift in Sources */,
+				21AB2F8A308F3EF600C4EBCA /* CollectionPresenterTests.swift in Sources */,
 				3F6806AE29CBBAF200B4F915 /* ExampleUnitTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -862,7 +870,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.practicum.FakeNFTTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -880,7 +888,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.practicum.FakeNFTTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -897,6 +905,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.practicum.FakeNFTUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -913,6 +922,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.practicum.FakeNFTUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
