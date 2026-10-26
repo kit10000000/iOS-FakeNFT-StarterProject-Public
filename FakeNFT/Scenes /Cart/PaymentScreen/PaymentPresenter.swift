@@ -9,7 +9,8 @@ import Foundation
 
 protocol PaymentPresenterProtocol {
     func viewDidLoad()
-    var currencyViewModelArray: [Currency] { get }
+    var currencyViewModelArray: [CurrencyViewModel] { get }
+    func didSelectCurrency(at index: Int)
 }
 
 // MARK: - State
@@ -25,11 +26,19 @@ final class PaymentPresenterImpl: PaymentPresenterProtocol {
     weak var view: PaymentViewControllerProtocol?
 
     // MARK: - Private Properties
-    private(set) var currencyViewModelArray: [Currency] = []
+
+    private(set) var currencyViewModelArray: [CurrencyViewModel] = []
+    private var selectedCurrency: Currency? = nil
 
     private var currencyList: [Currency] = [] {
         didSet {
-            currencyViewModelArray = currencyList
+            currencyViewModelArray = currencyList.map {
+                return CurrencyViewModel(
+                    title: $0.title,
+                    name: $0.name,
+                    imageURL: $0.image.flatMap { URL(string: $0) }
+                )
+            }
         }
     }
 
@@ -53,6 +62,11 @@ final class PaymentPresenterImpl: PaymentPresenterProtocol {
 
     func viewDidLoad() {
         state = .loading
+    }
+
+    func didSelectCurrency(at index: Int) {
+        self.selectedCurrency = currencyList[index]
+        view?.setPayButtonEnabled(true)
     }
 
     // MARK: - Private Methods
@@ -81,7 +95,6 @@ final class PaymentPresenterImpl: PaymentPresenterProtocol {
             }
             switch result {
             case .success(let currencies):
-                print(currencies)
                 self.currencyList = currencies
                 state = .data
             case .failure(let error):

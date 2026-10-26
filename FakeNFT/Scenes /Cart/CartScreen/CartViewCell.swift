@@ -21,7 +21,7 @@ final class CartViewCell: UITableViewCell {
 
     private lazy var nftImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.layer.cornerRadius = 16
+        imageView.layer.cornerRadius = Constants.imageCornerRadius
         imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,9 +60,9 @@ final class CartViewCell: UITableViewCell {
         let stackView = UIStackView(arrangedSubviews: [titleLabel, ratingView, priceCaptionLabel, priceLabel])
         stackView.axis = .vertical
         stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.spacing = 4
+        stackView.spacing = Constants.labelsStackSpacing
         stackView.alignment = .leading
-        stackView.setCustomSpacing(12, after: ratingView)
+        stackView.setCustomSpacing(Constants.ratingToPriceSpacing, after: ratingView)
         return stackView
     }()
 
@@ -131,5 +131,8 @@ private extension CartViewCell {
         static let deleteButtonSize: CGFloat = 40
         static let imageToLabelsSpacing: CGFloat = 20
         static let labelsToButtonSpacing: CGFloat = 8
+        static let imageCornerRadius: CGFloat = 16
+        static let labelsStackSpacing: CGFloat = 4
+        static let ratingToPriceSpacing: CGFloat = 12
     }
 }

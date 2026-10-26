@@ -11,9 +11,10 @@ protocol PaymentViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     func display()
     func showLoading()
     func hideLoading()
+    func setPayButtonEnabled(_ isEnabled: Bool)
 }
 
-final class PaymentViewController: UIViewController, UICollectionViewDelegate {
+final class PaymentViewController: UIViewController {
 
     // MARK: - Properties
 
@@ -37,12 +38,14 @@ final class PaymentViewController: UIViewController, UICollectionViewDelegate {
         button.setTitle(NSLocalizedString("Payment.button", comment: ""), for: .normal)
         button.titleLabel?.font = .bodyBold
         button.setTitleColor(.systemBackground, for: .normal)
-        button.backgroundColor = .segmentActive
+        button.backgroundColor = .ypGrayUniversal
         button.layer.cornerRadius = Constants.payButtonCornerRadius
         button.addAction(UIAction { [weak self] _ in
 
         }, for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
+        button.isEnabled = false
+
         return button
     }()
 
@@ -114,9 +117,10 @@ final class PaymentViewController: UIViewController, UICollectionViewDelegate {
     private func setupLayout() {
 
         collectionView.isScrollEnabled = false
-        collectionView.allowsMultipleSelection = true
+        collectionView.allowsMultipleSelection = false
+        collectionView.allowsSelection = true
         collectionView.dataSource = self
-        collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collectionView.register(CurrencyViewCell.self, forCellWithReuseIdentifier: CurrencyViewCell.reuseIdentifier)
         view.addSubview(collectionView)
 
         navigationItem.titleView = titleLabel
@@ -171,6 +175,11 @@ extension PaymentViewController: PaymentViewControllerProtocol {
     func hideLoading() {
         activityIndicator.stopAnimating()
     }
+
+    func setPayButtonEnabled(_ isEnabled: Bool) {
+        payButton.isEnabled = isEnabled
+        payButton.backgroundColor = .segmentActive
+    }
 }
 
 // MARK: - Constants
@@ -185,6 +194,9 @@ private extension PaymentViewController {
         static let payButtonCornerRadius: CGFloat = 16
         static let labelsStackSpacing: CGFloat = 20
         static let panelTopInset: CGFloat = 16
+        static let itemSpacing: CGFloat = 7
+        static let itemHeight: CGFloat = 46
+        static let columnsCount: CGFloat = 2
     }
 }
 
@@ -196,8 +208,52 @@ extension PaymentViewController: UICollectionViewDataSource {
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        cell.backgroundColor = .red
-        return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CurrencyViewCell.reuseIdentifier, for: indexPath)
+        guard let currencyCell = cell as? CurrencyViewCell,
+              let entity = presenter?.currencyViewModelArray else {
+            return UICollectionViewCell()
+        }
+        currencyCell.configure(currency: entity[indexPath.row])
+        return currencyCell
+    }
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+
+extension PaymentViewController: UICollectionViewDelegateFlowLayout {
+
+    func collectionView(_ cv: UICollectionView, layout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let spacing = Constants.itemSpacing
+        let columns = Constants.columnsCount
+        let insets = Constants.sideInset * 2
+        let available = cv.bounds.width - insets - spacing * (columns - 1)
+        let width = available / columns
+        return CGSize(width: width, height: Constants.itemHeight)
+    }
+
+    func collectionView(_ cv: UICollectionView, layout: UICollectionViewLayout,
+                        insetForSectionAt section: Int) -> UIEdgeInsets {
+        UIEdgeInsets(top: Constants.sideInset, left: Constants.sideInset,
+                     bottom: 0, right: Constants.sideInset)
+    }
+
+    func collectionView(_ cv: UICollectionView, layout: UICollectionViewLayout,
+                        minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        Constants.itemSpacing
+    }
+
+    func collectionView(_ cv: UICollectionView, layout: UICollectionViewLayout,
+                        minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        Constants.itemSpacing
+    }
+}
+
+// MARK: - UICollectionViewDelegate
+
+extension PaymentViewController: UICollectionViewDelegate {
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        presenter?.didSelectCurrency(at: indexPath.row)
     }
 }

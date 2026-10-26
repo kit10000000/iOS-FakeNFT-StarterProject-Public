@@ -278,7 +278,9 @@ extension CartViewController: UITableViewDataSource {
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: CartViewCell.reuseIdentifier, for: indexPath) as? CartViewCell,
             let model = presenter?.nftCartViewModelArray[indexPath.row]
-        else { return UITableViewCell() }
+        else {
+            return UITableViewCell()
+        }
         cell.delegate = self
         cell.configure(nft: model)
         return cell
