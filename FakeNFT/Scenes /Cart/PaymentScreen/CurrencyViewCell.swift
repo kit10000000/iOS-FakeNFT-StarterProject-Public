@@ -14,13 +14,11 @@ final class CurrencyViewCell: UICollectionViewCell {
     static let reuseIdentifier = "CurrencyViewCell"
 
     private enum Constants {
-        static let fontSize: CGFloat = 13
         static let backgroundCornerRadius: CGFloat = 16
         static let imageSize: CGFloat = 36
         static let sideInset: CGFloat = 16
         static let imageToLabelsSpacing: CGFloat = 8
         static let labelsStackSpacing: CGFloat = 2
-        static let imageCornerRadius: CGFloat = 16
         static let imageBackgroundCornerRadius: CGFloat = 8
         static let imageBackgroundInset: CGFloat = 8
         static let imageInnerSize: CGFloat = 32

@@ -47,6 +47,7 @@
 		7810DE0B307E2F6400FCFC15 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810DE0A307E2F6400FCFC15 /* RatingView.swift */; };
 		7810DF8C30810E7A00FCFC15 /* CartPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810DF8B30810E7A00FCFC15 /* CartPresenterTests.swift */; };
 		781716BA30910CDE00CA2B99 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781716B930910CDE00CA2B99 /* WebViewController.swift */; };
+		781716F33091153B00CA2B99 /* PaymentPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781716F23091153B00CA2B99 /* PaymentPresenterTests.swift */; };
 		787C7C1E3087899D00105350 /* OrderPutRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C7C1D3087899200105350 /* OrderPutRequest.swift */; };
 		78C92B55308D0BC2006129C5 /* CurrencyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C92B54308D0BC2006129C5 /* CurrencyService.swift */; };
 		78C92B57308D0C03006129C5 /* CurrenciesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C92B56308D0C03006129C5 /* CurrenciesRequest.swift */; };
@@ -120,6 +121,7 @@
 		7810DE0A307E2F6400FCFC15 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
 		7810DF8B30810E7A00FCFC15 /* CartPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartPresenterTests.swift; sourceTree = "<group>"; };
 		781716B930910CDE00CA2B99 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		781716F23091153B00CA2B99 /* PaymentPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaymentPresenterTests.swift; sourceTree = "<group>"; };
 		787C7C1D3087899200105350 /* OrderPutRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderPutRequest.swift; sourceTree = "<group>"; };
 		78C92B54308D0BC2006129C5 /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
 		78C92B56308D0C03006129C5 /* CurrenciesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesRequest.swift; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 		3F6806AC29CBBAF200B4F915 /* FakeNFTTests */ = {
 			isa = PBXGroup;
 			children = (
+				781716F23091153B00CA2B99 /* PaymentPresenterTests.swift */,
 				7810DF8D30810E8B00FCFC15 /* Mocks */,
 				7810DF8B30810E7A00FCFC15 /* CartPresenterTests.swift */,
 				3F6806AD29CBBAF200B4F915 /* ExampleUnitTests.swift */,
@@ -606,6 +609,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				781716F33091153B00CA2B99 /* PaymentPresenterTests.swift in Sources */,
 				7810DF8C30810E7A00FCFC15 /* CartPresenterTests.swift in Sources */,
 				3F6806AE29CBBAF200B4F915 /* ExampleUnitTests.swift in Sources */,
 			);

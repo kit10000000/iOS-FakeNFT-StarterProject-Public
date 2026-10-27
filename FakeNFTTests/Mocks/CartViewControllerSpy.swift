@@ -9,6 +9,8 @@ import UIKit
 @testable import FakeNFT
 
 final class CartViewControllerSpy: CartViewControllerProtocol {
+
+
     var activityIndicator = UIActivityIndicatorView()
 
     var displayCalled = false
@@ -24,4 +26,5 @@ final class CartViewControllerSpy: CartViewControllerProtocol {
     func showError(_ model: ErrorModel) { showErrorCalled = true; onEvent?() }
     func showLoading()              { showLoadingCalled = true }
     func hideLoading()              { hideLoadingCalled = true }
+    func showPaymentScreen() {}
 }

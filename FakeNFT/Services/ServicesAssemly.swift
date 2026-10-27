@@ -2,7 +2,7 @@ final class ServicesAssembly {
 
     private let networkClient: NetworkClient
     private let nftStorage: NftStorage
-    private var useMock = true
+    private var useMock = false
 
     init(
         networkClient: NetworkClient,
