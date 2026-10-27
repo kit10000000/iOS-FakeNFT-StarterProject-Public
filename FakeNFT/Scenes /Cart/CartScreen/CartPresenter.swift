@@ -99,6 +99,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
                 self.order = order
                 if order.nfts.isEmpty {
                     state = .empty
+
                 } else {
                     self.loadNfts(ids: order.nfts)
                 }
@@ -138,7 +139,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
             switch result {
             case .success(let order):
                 self.order = order
-
+                self.nfts = []
                 if order.nfts.isEmpty {
                     state = .empty
                 } else {

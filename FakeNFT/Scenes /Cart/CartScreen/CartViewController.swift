@@ -225,6 +225,7 @@ extension CartViewController: CartViewControllerProtocol {
         bottomPanel.isHidden = true
         emptyCartTextLabel.isHidden = false
         tableView.isHidden = true
+        navigationItem.rightBarButtonItem?.isHidden = true
     }
 
     func showLoading() {
@@ -239,6 +240,7 @@ extension CartViewController: CartViewControllerProtocol {
         payButton.isEnabled = false
         tableView.isHidden = false
         sortButton.isEnabled = false
+        tableView.isHidden = true
     }
 
     func hideLoading() {
@@ -248,6 +250,7 @@ extension CartViewController: CartViewControllerProtocol {
         loadingBackgroundView.isHidden = true
         sortButton.isHidden = false
         sortButton.isEnabled = true
+        tableView.isHidden = false
     }
 
     func showPaymentScreen() {

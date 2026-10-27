@@ -18,7 +18,8 @@ public final class PaymentAssembly {
     public func build() -> UIViewController {
         let presenter = PaymentPresenterImpl(
             currencyService: servicesAssembler.currencyService,
-            paymentService: servicesAssembler.paymentService
+            paymentService: servicesAssembler.paymentService,
+            orderService: servicesAssembler.orderService
         )
         let viewController = PaymentViewController(presenter: presenter)
         presenter.view = viewController

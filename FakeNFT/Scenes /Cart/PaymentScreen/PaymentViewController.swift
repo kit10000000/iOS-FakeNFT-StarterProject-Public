@@ -12,6 +12,7 @@ protocol PaymentViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     func showLoading()
     func hideLoading()
     func setPayButtonEnabled(_ isEnabled: Bool)
+    func showPaymentSuccess()
 }
 
 final class PaymentViewController: UIViewController {
@@ -41,7 +42,7 @@ final class PaymentViewController: UIViewController {
         button.backgroundColor = .ypGrayUniversal
         button.layer.cornerRadius = Constants.payButtonCornerRadius
         button.addAction(UIAction { [weak self] _ in
-
+            self?.presenter?.didTapPay()
         }, for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.isEnabled = false
@@ -170,6 +171,7 @@ extension PaymentViewController: PaymentViewControllerProtocol {
 
     func showLoading() {
         activityIndicator.startAnimating()
+
     }
 
     func hideLoading() {
@@ -179,6 +181,14 @@ extension PaymentViewController: PaymentViewControllerProtocol {
     func setPayButtonEnabled(_ isEnabled: Bool) {
         payButton.isEnabled = isEnabled
         payButton.backgroundColor = .segmentActive
+    }
+
+    func showPaymentSuccess() {
+        let resultVC = PaymentResultViewController()
+        resultVC.onReturn = { [weak self] in
+            self?.navigationController?.popToRootViewController(animated: true)
+        }
+        navigationController?.pushViewController(resultVC, animated: true)
     }
 }
 
