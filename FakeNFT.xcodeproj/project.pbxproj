@@ -46,6 +46,7 @@
 		7805FA9E3085384500B0E861 /* CartStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7805FA9D3085384500B0E861 /* CartStorage.swift */; };
 		7810DE0B307E2F6400FCFC15 /* RatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810DE0A307E2F6400FCFC15 /* RatingView.swift */; };
 		7810DF8C30810E7A00FCFC15 /* CartPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7810DF8B30810E7A00FCFC15 /* CartPresenterTests.swift */; };
+		781716BA30910CDE00CA2B99 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 781716B930910CDE00CA2B99 /* WebViewController.swift */; };
 		787C7C1E3087899D00105350 /* OrderPutRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 787C7C1D3087899200105350 /* OrderPutRequest.swift */; };
 		78C92B55308D0BC2006129C5 /* CurrencyService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C92B54308D0BC2006129C5 /* CurrencyService.swift */; };
 		78C92B57308D0C03006129C5 /* CurrenciesRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C92B56308D0C03006129C5 /* CurrenciesRequest.swift */; };
@@ -118,6 +119,7 @@
 		7805FA9D3085384500B0E861 /* CartStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartStorage.swift; sourceTree = "<group>"; };
 		7810DE0A307E2F6400FCFC15 /* RatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RatingView.swift; sourceTree = "<group>"; };
 		7810DF8B30810E7A00FCFC15 /* CartPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CartPresenterTests.swift; sourceTree = "<group>"; };
+		781716B930910CDE00CA2B99 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
 		787C7C1D3087899200105350 /* OrderPutRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderPutRequest.swift; sourceTree = "<group>"; };
 		78C92B54308D0BC2006129C5 /* CurrencyService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyService.swift; sourceTree = "<group>"; };
 		78C92B56308D0C03006129C5 /* CurrenciesRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrenciesRequest.swift; sourceTree = "<group>"; };
@@ -184,6 +186,7 @@
 			children = (
 				0CF2C2DF2A784C5600FDC837 /* Views */,
 				0CF2C2DE2A784C4C00FDC837 /* Protocols */,
+				781716B930910CDE00CA2B99 /* WebViewController.swift */,
 			);
 			path = Common;
 			sourceTree = "<group>";
@@ -571,6 +574,7 @@
 				3F68069B29CBBAF100B4F915 /* ProductDetailsTableViewController.swift in Sources */,
 				78C92B55308D0BC2006129C5 /* CurrencyService.swift in Sources */,
 				7810DE0B307E2F6400FCFC15 /* RatingView.swift in Sources */,
+				781716BA30910CDE00CA2B99 /* WebViewController.swift in Sources */,
 				0CFCB7402A78002A0009A829 /* ExamplePutService.swift in Sources */,
 				3F6806D529CBBEC700B4F915 /* NetworkTask.swift in Sources */,
 				0CF2C2DB2A783C1B00FDC837 /* LoadingView.swift in Sources */,

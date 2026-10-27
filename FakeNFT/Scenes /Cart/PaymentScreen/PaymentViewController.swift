@@ -60,9 +60,9 @@ final class PaymentViewController: UIViewController {
     }()
 
     private lazy var panelStack: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [agreementTextLabel, payButton])
+        let stackView = UIStackView(arrangedSubviews: [agreementTextLabel, agreementButton, payButton])
         stackView.axis = .vertical
-        stackView.spacing = Constants.labelsStackSpacing
+        stackView.setCustomSpacing(Constants.labelsStackSpacing, after: agreementButton)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.alignment = .fill
         return stackView
@@ -90,6 +90,25 @@ final class PaymentViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout())
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         return collectionView
+    }()
+
+    private lazy var agreementButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.setTitle(NSLocalizedString("Payment.agreement.link", comment: ""), for: .normal)
+        button.setTitleColor(.ypBlueUniversal, for: .normal)
+        button.titleLabel?.font = .caption2
+        button.contentHorizontalAlignment = .leading
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addAction(UIAction { [weak self] _ in
+            guard let url = URL(string: Constants.agreementURLString) else {
+                return
+            }
+            self?.navigationItem.backButtonDisplayMode = .minimal
+            self?.navigationController?.pushViewController(
+                WebViewController(url: url), animated: true
+            )
+        }, for: .touchUpInside)
+        return button
     }()
 
     // MARK: - Initializers
@@ -171,7 +190,6 @@ extension PaymentViewController: PaymentViewControllerProtocol {
 
     func showLoading() {
         activityIndicator.startAnimating()
-
     }
 
     func hideLoading() {
@@ -207,6 +225,7 @@ private extension PaymentViewController {
         static let itemSpacing: CGFloat = 7
         static let itemHeight: CGFloat = 46
         static let columnsCount: CGFloat = 2
+        static let agreementURLString = "https://yandex.ru/legal/practicum_termsofuse/"
     }
 }
 
