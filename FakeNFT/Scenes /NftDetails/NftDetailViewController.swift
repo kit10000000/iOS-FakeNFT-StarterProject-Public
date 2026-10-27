@@ -8,6 +8,7 @@ protocol NftDetailView: AnyObject, ErrorView, LoadingView {
 final class NftDetailViewController: UIViewController {
 
     private let presenter: NftDetailPresenter
+    var onDismiss: (() -> Void)?
 
     private lazy var collectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
@@ -86,6 +87,13 @@ final class NftDetailViewController: UIViewController {
     @objc
     private func close() {
         dismiss(animated: true)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if isBeingDismissed {
+            onDismiss?()
+        }
     }
 }
 

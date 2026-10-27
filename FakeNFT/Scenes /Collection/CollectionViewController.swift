@@ -125,6 +125,11 @@ final class CollectionViewController: UIViewController, CollectionView, LoadingV
         let assembly = NftDetailAssembly(servicesAssembler: servicesAssembly)
         let input = NftDetailInput(id: id)
         let nftViewController = assembly.build(with: input)
+        if let detail = nftViewController as? NftDetailViewController {
+            detail.onDismiss = { [weak self] in
+                self?.presenter.didCloseNft()
+            }
+        }
         present(nftViewController, animated: true)
     }
 }
