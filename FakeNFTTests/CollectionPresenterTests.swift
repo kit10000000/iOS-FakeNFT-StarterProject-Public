@@ -121,6 +121,77 @@ final class CollectionPresenterTests: XCTestCase {
         XCTAssertEqual(view.updates.last?.isLiked, false)
         XCTAssertEqual(likes.saved.count, 1)
     }
+    
+    func testSecondLikeIsSentAfterTheFirstResponse() {
+        let likes = FakeLikesService(likes: [])
+        likes.hold = true
+        let view = CollectionViewSpy()
+        let presenter = makePresenter(
+            nftIds: ["a", "b"],
+            nftService: readyNftService(["a", "b"]),
+            likes: likes,
+            order: FakeOrderService(ids: []),
+            view: view
+        )
+        presenter.viewDidLoad()
+        waitUntil { view.nfts.map(\.id) == ["a", "b"] }
+        presenter.didTapLike(id: "a")
+        waitMain()
+        presenter.didTapLike(id: "b")
+        waitMain()
+        XCTAssertEqual(likes.saved, [["a"]])
+        likes.hold = false
+        likes.finishHeld()
+        waitUntil { likes.saved.count == 2 }
+        XCTAssertEqual(likes.saved, [["a"], ["a", "b"]])
+    }
+
+    func testSecondCartSaveIncludesTheFirstId() {
+        let order = FakeOrderService(ids: [])
+        order.holdSave = true
+        let view = CollectionViewSpy()
+        let presenter = makePresenter(
+            nftIds: ["a", "b"],
+            nftService: readyNftService(["a", "b"]),
+            likes: FakeLikesService(likes: []),
+            order: order,
+            view: view
+        )
+        presenter.viewDidLoad()
+        waitUntil { view.nfts.map(\.id) == ["a", "b"] }
+        presenter.didTapCart(id: "a")
+        waitMain()
+        presenter.didTapCart(id: "b")
+        waitMain()
+        XCTAssertEqual(order.saved, [["a"]])
+        order.holdSave = false
+        order.finishHeld()
+        waitUntil { order.saved.count == 2 }
+        XCTAssertEqual(order.saved, [["a"], ["a", "b"]])
+    }
+
+    func testLikeDoesNotBlockCartOnTheSameNft() {
+        let likes = FakeLikesService(likes: [])
+        likes.hold = true
+        let order = FakeOrderService(ids: ["foreign"])
+        order.holdSave = true
+        let view = CollectionViewSpy()
+        let presenter = makePresenter(
+            nftIds: ["nft"],
+            nftService: readyNftService(["nft"]),
+            likes: likes,
+            order: order,
+            view: view
+        )
+        presenter.viewDidLoad()
+        waitUntil { view.nfts.map(\.id) == ["nft"] }
+        presenter.didTapLike(id: "nft")
+        waitMain()
+        presenter.didTapCart(id: "nft")
+        waitMain()
+        XCTAssertEqual(likes.saved, [["nft"]])
+        XCTAssertEqual(order.saved, [["foreign", "nft"]])
+    }
 
     func testCartErrorRestoresCell() {
         let order = FakeOrderService(ids: ["foreign"])
@@ -236,6 +307,7 @@ private final class FakeLikesService: LikesService {
     var saved: [[String]] = []
     var hold = false
     private var held: ProfileCompletion?
+    private var heldLikes: [String] = []
 
     init(likes: [String]) {
         self.likes = likes
@@ -249,6 +321,7 @@ private final class FakeLikesService: LikesService {
         saved.append(likes)
         if hold {
             held = completion
+            heldLikes = likes
             return
         }
         self.likes = likes
@@ -257,6 +330,12 @@ private final class FakeLikesService: LikesService {
 
     func failHeld() {
         held?(.failure(NetworkClientError.urlSessionError))
+        held = nil
+    }
+    
+    func finishHeld() {
+        likes = heldLikes
+        held?(.success(profile(likes)))
         held = nil
     }
 
@@ -270,6 +349,7 @@ private final class FakeOrderService: CatalogOrderService {
     var saved: [[String]] = []
     var holdSave = false
     private var held: CatalogOrderCompletion?
+    private var heldIds: [String] = []
 
     init(ids: [String]) {
         self.ids = ids
@@ -283,6 +363,7 @@ private final class FakeOrderService: CatalogOrderService {
         saved.append(ids)
         if holdSave {
             held = completion
+            heldIds = ids
             return
         }
         self.ids = ids
@@ -291,6 +372,12 @@ private final class FakeOrderService: CatalogOrderService {
 
     func failHeld() {
         held?(.failure(NetworkClientError.urlSessionError))
+        held = nil
+    }
+    
+    func finishHeld() {
+        ids = heldIds
+        held?(.success(ids))
         held = nil
     }
 }

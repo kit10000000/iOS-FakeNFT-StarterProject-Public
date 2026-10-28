@@ -28,6 +28,11 @@ final class CollectionPresenter {
         case data
         case failed
     }
+    
+    private struct ListChange {
+        let id: String
+        let include: Bool
+    }
 
     private let collection: NftCollection
     private let nftService: NftService
@@ -39,7 +44,12 @@ final class CollectionPresenter {
     private var cartIds: [String] = []
     private var state: State = .loading
     private var isOpening = false
-    private var pendingIds: Set<String> = []
+    private var confirmedLikedIds: [String] = []
+    private var confirmedCartIds: [String] = []
+    private var likeChanges: [ListChange] = []
+    private var cartChanges: [ListChange] = []
+    private var likeInFlightId: String?
+    private var cartInFlightId: String?
 
     init(collection: NftCollection, nftService: NftService, likesService: LikesService, orderService: CatalogOrderService) {
         self.collection = collection
@@ -140,6 +150,8 @@ final class CollectionPresenter {
                     self.nfts = received
                     self.likedIds = liked
                     self.cartIds = cart
+                    self.confirmedLikedIds = liked
+                    self.confirmedCartIds = cart
                     self.view?.showCollection(self.makeHeaderModel())
                     self.view?.showNfts(received, likedIds: Set(liked), cartIds: Set(cart))
                     self.view?.setGridInteractionEnabled(true)
@@ -176,92 +188,108 @@ final class CollectionPresenter {
     }
 
     func didTapLike(id: String) {
-        guard state == .data, !pendingIds.contains(id), let index = nfts.firstIndex(where: { $0.id == id }) else { return }
-        pendingIds.insert(id)
-        let wasLiked = likedIds.contains(id)
-        if let current = likedIds.firstIndex(of: id) {
-            likedIds.remove(at: current)
-        } else {
-            likedIds.append(id)
-        }
-        view?.updateNft(at: index, isLiked: !wasLiked, isInCart: cartIds.contains(id))
-        let likesToSend = likedIds
+        guard state == .data, !likeChanges.contains(where: { $0.id == id }), let index = nfts.firstIndex(where: { $0.id == id }) else { return }
+        let include = !likedIds.contains(id)
+        let change = ListChange(id: id, include: include)
+        likedIds = applying([change], to: likedIds)
+        view?.updateNft(at: index, isLiked: include, isInCart: cartIds.contains(id))
+        likeChanges.append(change)
+        sendNextLike()
+    }
+
+    func didTapCart(id: String) {
+        guard state == .data, !cartChanges.contains(where: { $0.id == id }), let index = nfts.firstIndex(where: { $0.id == id }) else { return }
+        let include = !cartIds.contains(id)
+        let change = ListChange(id: id, include: include)
+        cartIds = applying([change], to: cartIds)
+        view?.updateNft(at: index, isLiked: likedIds.contains(id), isInCart: include)
+        cartChanges.append(change)
+        sendNextCart()
+    }
+
+    private func sendNextLike() {
+        guard likeInFlightId == nil, let change = likeChanges.first else { return }
+        likeInFlightId = change.id
+        let likesToSend = applying([change], to: confirmedLikedIds)
         likesService.saveLikes(likesToSend) { [weak self] result in
             DispatchQueue.main.async {
                 guard let self else { return }
-                self.pendingIds.remove(id)
+                self.likeInFlightId = nil
+                self.likeChanges.removeAll { $0.id == change.id }
                 switch result {
                 case .success(let profile):
-                    self.likedIds = profile.likes
-                    self.view?.updateNft(at: index, isLiked: profile.likes.contains(id), isInCart: self.cartIds.contains(id))
+                    self.confirmedLikedIds = profile.likes
+                    self.likedIds = self.applying(self.likeChanges, to: profile.likes)
+                    self.updateNft(id: change.id)
                 case .failure:
-                    self.restore(id, wasIncluded: wasLiked, in: &self.likedIds)
-                    self.view?.updateNft(at: index, isLiked: wasLiked, isInCart: self.cartIds.contains(id))
+                    self.likedIds = self.applying(self.likeChanges, to: self.confirmedLikedIds)
+                    self.updateNft(id: change.id)
                     self.view?.showError(self.makeErrorModel { [weak self] in
-                        self?.didTapLike(id: id)
+                        self?.didTapLike(id: change.id)
                     })
                 }
+                self.sendNextLike()
             }
         }
     }
 
-    func didTapCart(id: String) {
-        guard state == .data, !pendingIds.contains(id), let index = nfts.firstIndex(where: { $0.id == id }) else { return }
-        pendingIds.insert(id)
-        let wasInCart = cartIds.contains(id)
-        if let current = cartIds.firstIndex(of: id) {
-            cartIds.remove(at: current)
-        } else {
-            cartIds.append(id)
-        }
-        view?.updateNft(at: index, isLiked: likedIds.contains(id), isInCart: !wasInCart)
+    private func sendNextCart() {
+        guard cartInFlightId == nil, let change = cartChanges.first else { return }
+        cartInFlightId = change.id
         orderService.loadNftIds { [weak self] result in
             guard let self else { return }
             switch result {
-            case .failure:
+            case .failure(let error):
                 DispatchQueue.main.async {
-                    self.pendingIds.remove(id)
-                    self.restore(id, wasIncluded: wasInCart, in: &self.cartIds)
-                    self.view?.updateNft(at: index, isLiked: self.likedIds.contains(id), isInCart: wasInCart)
-                    self.view?.showError(self.makeErrorModel { [weak self] in
-                        self?.didTapCart(id: id)
-                    })
+                    self.finishCart(change, result: .failure(error))
                 }
-            case .success(var ids):
-                if let found = ids.firstIndex(of: id) {
-                    ids.remove(at: found)
-                } else {
-                    ids.append(id)
-                }
+            case .success(let serverIds):
+                let ids = self.applying([change], to: serverIds)
                 self.orderService.saveNftIds(ids) { [weak self] saveResult in
                     DispatchQueue.main.async {
                         guard let self else { return }
-                        self.pendingIds.remove(id)
-                        switch saveResult {
-                        case .success(let saved):
-                            self.cartIds = saved
-                            self.view?.updateNft(at: index, isLiked: self.likedIds.contains(id), isInCart: saved.contains(id))
-                        case .failure:
-                            self.restore(id, wasIncluded: wasInCart, in: &self.cartIds)
-                            self.view?.updateNft(at: index, isLiked: self.likedIds.contains(id), isInCart: wasInCart)
-                            self.view?.showError(self.makeErrorModel { [weak self] in
-                                self?.didTapCart(id: id)
-                            })
-                        }
+                        self.finishCart(change, result: saveResult)
                     }
                 }
             }
         }
     }
 
-    private func restore(_ id: String, wasIncluded: Bool, in list: inout [String]) {
-        if wasIncluded {
-            if !list.contains(id) {
-                list.append(id)
-            }
-        } else {
-            list.removeAll { $0 == id }
+    private func finishCart(_ change: ListChange, result: Result<[String], Error>) {
+        cartInFlightId = nil
+        cartChanges.removeAll { $0.id == change.id }
+        switch result {
+        case .success(let saved):
+            self.confirmedCartIds = saved
+            self.cartIds = self.applying(self.cartChanges, to: saved)
+            self.updateNft(id: change.id)
+        case .failure:
+            self.cartIds = self.applying(self.cartChanges, to: self.confirmedCartIds)
+            self.updateNft(id: change.id)
+            self.view?.showError(self.makeErrorModel { [weak self] in
+                self?.didTapCart(id: change.id)
+            })
         }
+        sendNextCart()
+    }
+
+    private func updateNft(id: String) {
+        guard let index = nfts.firstIndex(where: { $0.id == id }) else { return }
+        view?.updateNft(at: index, isLiked: likedIds.contains(id), isInCart: cartIds.contains(id))
+    }
+
+    private func applying(_ changes: [ListChange], to ids: [String]) -> [String] {
+        var list = ids
+        for change in changes {
+            if change.include {
+                if !list.contains(change.id) {
+                    list.append(change.id)
+                }
+            } else {
+                list.removeAll { $0 == change.id }
+            }
+        }
+        return list
     }
 
     private func makeHeaderModel() -> CollectionHeaderModel {

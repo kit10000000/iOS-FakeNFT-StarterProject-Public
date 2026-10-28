@@ -23,6 +23,7 @@
 		0CFCB7492A7808900009A829 /* TestCatalogController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFCB7482A7808900009A829 /* TestCatalogController.swift */; };
 		0CFCB74B2A780EA80009A829 /* UIView+Constraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFCB74A2A780EA80009A829 /* UIView+Constraints.swift */; };
 		0CFCB74E2A7817DC0009A829 /* NftStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CFCB74D2A7817DC0009A829 /* NftStorage.swift */; };
+		210B369F3092472A001C8224 /* NftDecodingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 210B369E3092472A001C8224 /* NftDecodingTests.swift */; };
 		21AB288A3086014100C4EBCA /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB28893086014100C4EBCA /* UserProfile.swift */; };
 		21AB288E308601B900C4EBCA /* ProfileRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB288D308601B900C4EBCA /* ProfileRequest.swift */; };
 		21AB2890308601F100C4EBCA /* LikesService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21AB288F308601F100C4EBCA /* LikesService.swift */; };
@@ -104,6 +105,7 @@
 		0CFCB7482A7808900009A829 /* TestCatalogController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCatalogController.swift; sourceTree = "<group>"; };
 		0CFCB74A2A780EA80009A829 /* UIView+Constraints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Constraints.swift"; sourceTree = "<group>"; };
 		0CFCB74D2A7817DC0009A829 /* NftStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftStorage.swift; sourceTree = "<group>"; };
+		210B369E3092472A001C8224 /* NftDecodingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NftDecodingTests.swift; sourceTree = "<group>"; };
 		21AB28893086014100C4EBCA /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		21AB288D308601B900C4EBCA /* ProfileRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileRequest.swift; sourceTree = "<group>"; };
 		21AB288F308601F100C4EBCA /* LikesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LikesService.swift; sourceTree = "<group>"; };
@@ -305,6 +307,7 @@
 				3F6806AD29CBBAF200B4F915 /* ExampleUnitTests.swift */,
 				21AB2F87308A506300C4EBCA /* CatalogPresenterTests.swift */,
 				21AB2F89308F3EF600C4EBCA /* CollectionPresenterTests.swift */,
+				210B369E3092472A001C8224 /* NftDecodingTests.swift */,
 			);
 			path = FakeNFTTests;
 			sourceTree = "<group>";
@@ -635,6 +638,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				21AB2F88308A506300C4EBCA /* CatalogPresenterTests.swift in Sources */,
+				210B369F3092472A001C8224 /* NftDecodingTests.swift in Sources */,
 				21AB2F8A308F3EF600C4EBCA /* CollectionPresenterTests.swift in Sources */,
 				3F6806AE29CBBAF200B4F915 /* ExampleUnitTests.swift in Sources */,
 			);
