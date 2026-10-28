@@ -10,7 +10,6 @@ import UIKit
 
 final class CartViewControllerSpy: CartViewControllerProtocol {
 
-
     var activityIndicator = UIActivityIndicatorView()
 
     var displayCalled = false

@@ -151,7 +151,16 @@ final class PaymentPresenterImpl: PaymentPresenterProtocol {
         return ErrorModel(
             message: message,
             actionText: NSLocalizedString("Error.repeat", comment: ""),
-            action: { [weak self] in self?.didTapPay() },
+            action: { [weak self] in
+                guard let self else {
+                    return
+                }
+                if self.currencyList.isEmpty {
+                    self.state = .loading
+                } else {
+                    self.didTapPay()
+                }
+            },
             cancelText: NSLocalizedString("Error.cancel", comment: ""),
             cancelAction: nil
         )

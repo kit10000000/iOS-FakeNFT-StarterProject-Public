@@ -5,7 +5,6 @@
 //  Created by Ekaterina on 27.10.2026.
 //
 
-
 @testable import FakeNFT
 
 final class PaymentServiceStub: PaymentService {
