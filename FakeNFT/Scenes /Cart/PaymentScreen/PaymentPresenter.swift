@@ -34,7 +34,7 @@ final class PaymentPresenterImpl: PaymentPresenterProtocol {
     // MARK: - Private Properties
 
     private(set) var currencyViewModelArray: [CurrencyViewModel] = []
-    private var selectedCurrency: Currency? = nil
+    private var selectedCurrency: Currency?
 
     private var currencyList: [Currency] = [] {
         didSet {
@@ -60,7 +60,9 @@ final class PaymentPresenterImpl: PaymentPresenterProtocol {
 
     // MARK: - Initializers
 
-    init(currencyService: CurrencyService, paymentService: PaymentService, orderService: OrderService) {
+    init(currencyService: CurrencyService,
+         paymentService: PaymentService,
+         orderService: OrderService) {
         self.currencyService = currencyService
         self.paymentService = paymentService
         self.orderService = orderService

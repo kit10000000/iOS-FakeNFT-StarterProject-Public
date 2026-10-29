@@ -81,7 +81,7 @@ final class PaymentViewController: UIViewController {
 
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
-        label.text = "Выберите способ оплаты"
+        label.text = NSLocalizedString("Payment.title", comment: "title screen")
         label.font = .systemFont(ofSize: 17, weight: .bold)
         return label
     }()
@@ -157,7 +157,7 @@ final class PaymentViewController: UIViewController {
 
         NSLayoutConstraint.activate([
             collectionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            collectionView.leadingAnchor.constraint(equalTo:view.safeAreaLayoutGuide.leadingAnchor),
+            collectionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             collectionView.bottomAnchor.constraint(equalTo: bottomPanel.topAnchor),
 

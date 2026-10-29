@@ -95,6 +95,14 @@ final class CurrencyViewCell: UICollectionViewCell {
         nil
     }
 
+    // MARK: - Methods
+
+    func configure(currency: CurrencyViewModel) {
+        titleLabel.text = currency.title
+        nameLabel.text = currency.name
+        currencyImageView.kf.setImage(with: currency.imageURL)
+    }
+
     // MARK: - Private Methods
 
     private func setupUI() {
@@ -127,13 +135,5 @@ final class CurrencyViewCell: UICollectionViewCell {
             labelsStack.trailingAnchor.constraint(lessThanOrEqualTo: currencyBackgroundView.trailingAnchor, constant: -Constants.sideInset)
 
         ])
-    }
-
-    // MARK: - Methods
-
-    func configure(currency: CurrencyViewModel) {
-        titleLabel.text = currency.title
-        nameLabel.text = currency.name
-        currencyImageView.kf.setImage(with: currency.imageURL)
     }
 }

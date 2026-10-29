@@ -20,8 +20,11 @@ final class CurrencyServiceMockImpl: CurrencyService {
         DispatchQueue.main.asyncAfter(deadline: .now() + Constants.mockDelay) {
             switch self.result {
             case .success(let currencies):
-                let currency = currencies.first(where: { $0.id == id })
-                completion(.success(currency!))
+                guard let currency = currencies.first(where: { $0.id == id }) else {
+                    completion(.failure(NetworkClientError.urlSessionError))
+                    return
+                }
+                completion(.success(currency))
             case .failure(let error):
                 completion(.failure(error))
             }

@@ -63,7 +63,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     // MARK: - Initializers
 
-    init(orderService: OrderService, nftService: NftService, storage: CartStorageProtocol) {
+    init(orderService: OrderService,
+         nftService: NftService,
+         storage: CartStorageProtocol) {
         self.orderService = orderService
         self.nftService = nftService
         self.storage = storage
@@ -99,7 +101,6 @@ final class CartPresenterImpl: CartPresenterProtocol {
                 self.order = order
                 if order.nfts.isEmpty {
                     state = .empty
-
                 } else {
                     self.loadNfts(ids: order.nfts)
                 }
