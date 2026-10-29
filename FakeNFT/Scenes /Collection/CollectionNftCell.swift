@@ -77,8 +77,7 @@ final class CollectionNftCell: UICollectionViewCell, ReuseIdentifying {
         coverImageView.constraintEdges(to: imageContainer)
         imageContainer.addSubview(likeButton)
         likeButton.translatesAutoresizingMaskIntoConstraints = false
-        likeButton.setImage(UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 22)), for: .normal)
-        likeButton.tintColor = .ypRedUniversal
+        setLiked(false)
         likeButton.addTarget(self, action: #selector(likeButtonTapped), for: .touchUpInside)
 
         nameLabel.font = .bodyBold
@@ -89,7 +88,7 @@ final class CollectionNftCell: UICollectionViewCell, ReuseIdentifying {
         priceLabel.textColor = .ypBlackUniversal
         priceLabel.numberOfLines = 1
 
-        cartButton.setImage(UIImage(systemName: "cart", withConfiguration: UIImage.SymbolConfiguration(pointSize: 18)), for: .normal)
+        setInCart(false)
         cartButton.tintColor = .ypBlackUniversal
         cartButton.addTarget(self, action: #selector(cartButtonTapped), for: .touchUpInside)
         cartButton.setContentHuggingPriority(.required, for: .horizontal)
@@ -124,13 +123,13 @@ final class CollectionNftCell: UICollectionViewCell, ReuseIdentifying {
     }
 
     private func setLiked(_ isLiked: Bool) {
-        let imageName = isLiked ? "heart.circle.fill" : "heart.fill"
-        likeButton.setImage(UIImage(systemName: imageName, withConfiguration: UIImage.SymbolConfiguration(pointSize: 22)), for: .normal)
+        likeButton.setImage(UIImage(systemName: "heart.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 22)), for: .normal)
+        likeButton.tintColor = isLiked ? .ypRedUniversal : .ypWhiteUniversal
     }
 
     private func setInCart(_ isInCart: Bool) {
-        let imageName = isInCart ? "xmark" : "cart"
-        cartButton.setImage(UIImage(systemName: imageName, withConfiguration: UIImage.SymbolConfiguration(pointSize: 18)), for: .normal)
+        let imageName = isInCart ? "nftCartDelete" : "nftCartAdd"
+        cartButton.setImage(UIImage(named: imageName)?.withRenderingMode(.alwaysOriginal), for: .normal)
     }
 
     @objc private func likeButtonTapped() {
