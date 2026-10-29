@@ -49,8 +49,9 @@ struct DefaultNetworkClient: NetworkClient {
                 onResponse(result)
             }
         }
-        guard let urlRequest = create(request: request) else { return nil }
-        
+        guard let urlRequest = create(request: request) else {
+            return nil
+        }
         let task = session.dataTask(with: urlRequest) { data, response, error in
             guard let response = response as? HTTPURLResponse else {
                 onResponse(.failure(NetworkClientError.urlSessionError))
@@ -111,10 +112,10 @@ struct DefaultNetworkClient: NetworkClient {
                 case .dtoString(let value):
                     return [URLQueryItem(name: field.key, value: value)]
                 case .dtoArray(let values):
-                    if values.isEmpty {
-                        return [URLQueryItem(name: field.key, value: "")]
-                    }
-                    return values.map { URLQueryItem(name: field.key, value: $0) }
+
+                    return values.isEmpty
+                        ? [URLQueryItem(name: field.key, value: "")]
+                        : values.map { URLQueryItem(name: field.key, value: $0) }
                 }
             }
             urlComponents.queryItems = queryItems

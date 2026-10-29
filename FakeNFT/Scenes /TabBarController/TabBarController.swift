@@ -10,6 +10,12 @@ final class TabBarController: UITabBarController {
         tag: 0
     )
 
+    private let cartTabBarItem = UITabBarItem(
+        title: NSLocalizedString("Tab.cart", comment: ""),
+        image: UIImage(resource: .basket),
+        tag: 1
+    )
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -17,8 +23,12 @@ final class TabBarController: UITabBarController {
         catalogController.title = NSLocalizedString("Tab.catalog", comment: "")
         let catalogVC = UINavigationController(rootViewController: catalogController)
         catalogVC.tabBarItem = catalogTabBarItem
+        
+        let cartController = CartAssembly(servicesAssembler: servicesAssembly).build()
+        let cartVC = UINavigationController(rootViewController: cartController)
+        cartVC.tabBarItem = cartTabBarItem
 
-        viewControllers = [catalogVC]
+        viewControllers = [catalogVC, cartVC]
 
         view.backgroundColor = .systemBackground
     }
