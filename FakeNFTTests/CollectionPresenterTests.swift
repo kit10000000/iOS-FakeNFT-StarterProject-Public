@@ -145,6 +145,32 @@ final class CollectionPresenterTests: XCTestCase {
         waitUntil { likes.saved.count == 2 }
         XCTAssertEqual(likes.saved, [["a"], ["a", "b"]])
     }
+    
+    func testFirstLikeFailureKeepsTheQueuedLike() {
+        let likes = FakeLikesService(likes: [])
+        likes.hold = true
+        let view = CollectionViewSpy()
+        let presenter = makePresenter(
+            nftIds: ["a", "b"],
+            nftService: readyNftService(["a", "b"]),
+            likes: likes,
+            order: FakeOrderService(ids: []),
+            view: view
+        )
+        presenter.viewDidLoad()
+        waitUntil { view.nfts.map(\.id) == ["a", "b"] }
+        presenter.didTapLike(id: "a")
+        waitMain()
+        presenter.didTapLike(id: "b")
+        waitMain()
+        XCTAssertEqual(likes.saved, [["a"]])
+        likes.hold = false
+        likes.failHeld()
+        waitUntil { likes.saved.count == 2 }
+        XCTAssertEqual(likes.saved, [["a"], ["b"]])
+        XCTAssertEqual(view.updates.last { $0.index == 0 }?.isLiked, false)
+        XCTAssertEqual(view.updates.last { $0.index == 1 }?.isLiked, true)
+    }
 
     func testSecondCartSaveIncludesTheFirstId() {
         let order = FakeOrderService(ids: [])
