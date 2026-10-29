@@ -2,7 +2,7 @@ final class ServicesAssembly {
 
     private let networkClient: NetworkClient
     private let nftStorage: NftStorage
-    private var useMock = true
+    private var useMock = false
 
     init(
         networkClient: NetworkClient,
@@ -41,5 +41,18 @@ final class ServicesAssembly {
 
     var cartStorage: CartStorage {
         CartStorage()
+    }
+
+    var currencyService: CurrencyService {
+        useMock ?
+            CurrencyServiceMockImpl(result: .success(
+                Currency.mockList
+            ))
+        :
+            CurrencyServiceImpl(networkClient: networkClient)
+    }
+
+    var paymentService: PaymentService {
+        PaymentServiceImpl(networkClient: networkClient)
     }
 }

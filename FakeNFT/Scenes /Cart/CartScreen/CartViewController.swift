@@ -11,6 +11,7 @@ import ProgressHUD
 protocol CartViewControllerProtocol: AnyObject, ErrorView, LoadingView {
     func display()
     func showEmptyState()
+    func showPaymentScreen()
 }
 
 protocol CartViewCellDelegate: AnyObject {
@@ -23,6 +24,7 @@ final class CartViewController: UIViewController {
 
     internal lazy var activityIndicator = UIActivityIndicatorView()
     weak var delegate: CartViewCellDelegate?
+    var makePaymentVC: (() -> UIViewController)?
 
     // MARK: - Private Properties
 
@@ -143,6 +145,8 @@ final class CartViewController: UIViewController {
     private func setupLayout() {
 
         navigationItem.rightBarButtonItem = sortButton
+        navigationItem.backButtonDisplayMode = .minimal
+        navigationController?.navigationBar.tintColor = .ypBlack
 
         bottomPanel.addSubview(labelsStack)
         bottomPanel.addSubview(payButton)
@@ -221,6 +225,7 @@ extension CartViewController: CartViewControllerProtocol {
         bottomPanel.isHidden = true
         emptyCartTextLabel.isHidden = false
         tableView.isHidden = true
+        navigationItem.rightBarButtonItem?.isHidden = true
     }
 
     func showLoading() {
@@ -235,6 +240,7 @@ extension CartViewController: CartViewControllerProtocol {
         payButton.isEnabled = false
         tableView.isHidden = false
         sortButton.isEnabled = false
+        tableView.isHidden = true
     }
 
     func hideLoading() {
@@ -244,6 +250,14 @@ extension CartViewController: CartViewControllerProtocol {
         loadingBackgroundView.isHidden = true
         sortButton.isHidden = false
         sortButton.isEnabled = true
+        tableView.isHidden = false
+    }
+
+    func showPaymentScreen() {
+        guard let paymentVC = makePaymentVC?() else {
+            return
+        }
+        navigationController?.pushViewController(paymentVC, animated: false)
     }
 
 }
@@ -267,7 +281,9 @@ extension CartViewController: UITableViewDataSource {
         guard
             let cell = tableView.dequeueReusableCell(withIdentifier: CartViewCell.reuseIdentifier, for: indexPath) as? CartViewCell,
             let model = presenter?.nftCartViewModelArray[indexPath.row]
-        else { return UITableViewCell() }
+        else {
+            return UITableViewCell()
+        }
         cell.delegate = self
         cell.configure(nft: model)
         return cell

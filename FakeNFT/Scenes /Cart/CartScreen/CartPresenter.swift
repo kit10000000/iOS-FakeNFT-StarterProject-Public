@@ -63,7 +63,9 @@ final class CartPresenterImpl: CartPresenterProtocol {
 
     // MARK: - Initializers
 
-    init(orderService: OrderService, nftService: NftService, storage: CartStorageProtocol) {
+    init(orderService: OrderService,
+         nftService: NftService,
+         storage: CartStorageProtocol) {
         self.orderService = orderService
         self.nftService = nftService
         self.storage = storage
@@ -76,6 +78,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
     }
 
     func didTapPay() {
+        view?.showPaymentScreen()
     }
 
     func didSelectSort(option: CartSortOption) {
@@ -137,7 +140,7 @@ final class CartPresenterImpl: CartPresenterProtocol {
             switch result {
             case .success(let order):
                 self.order = order
-
+                self.nfts = []
                 if order.nfts.isEmpty {
                     state = .empty
                 } else {
