@@ -103,6 +103,7 @@ final class CollectionNftCell: UICollectionViewCell, ReuseIdentifying {
 
         let contentStack = UIStackView(arrangedSubviews: [imageContainer, ratingView, infoRow])
         contentStack.axis = .vertical
+        contentStack.alignment = .leading
         contentStack.spacing = 8
 
         contentView.addSubview(contentStack)
@@ -110,6 +111,8 @@ final class CollectionNftCell: UICollectionViewCell, ReuseIdentifying {
 
         NSLayoutConstraint.activate([
             imageContainer.heightAnchor.constraint(equalTo: imageContainer.widthAnchor),
+            imageContainer.widthAnchor.constraint(equalTo: contentStack.widthAnchor),
+            infoRow.widthAnchor.constraint(equalTo: contentStack.widthAnchor),
             likeButton.topAnchor.constraint(equalTo: imageContainer.topAnchor),
             likeButton.trailingAnchor.constraint(equalTo: imageContainer.trailingAnchor),
             likeButton.widthAnchor.constraint(equalToConstant: 42),
