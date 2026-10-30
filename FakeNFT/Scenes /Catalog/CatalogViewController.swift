@@ -35,7 +35,6 @@ final class CatalogViewController: UIViewController, CatalogView, LoadingView, E
         super.viewDidLoad()
 
         navigationItem.backButtonDisplayMode = .minimal
-        title = nil
         navigationItem.title = ""
         navigationItem.rightBarButtonItem = sortButton
         overrideUserInterfaceStyle = .light
@@ -58,6 +57,7 @@ final class CatalogViewController: UIViewController, CatalogView, LoadingView, E
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.tabBarItem.title = NSLocalizedString("Tab.catalog", comment: "")
         presenter.viewWillAppear()
     }
 
