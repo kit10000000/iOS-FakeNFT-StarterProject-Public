@@ -48,6 +48,23 @@
 						"api",
 						"v1",
 						"collections"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "0",
+							"disabled": true
+						},
+						{
+							"key": "size",
+							"value": "25",
+							"disabled": true
+						},
+						{
+							"key": "sortBy",
+							"value": "name,asc",
+							"disabled": true
+						}
 					]
 				}
 			},
@@ -153,6 +170,11 @@
 						{
 							"key": "size",
 							"value": "10"
+						},
+						{
+							"key": "sortBy",
+							"value": "name,asc",
+							"disabled": true
 						}
 					]
 				}
@@ -402,7 +424,7 @@
 			"response": []
 		},
 		{
-			"name": "Put order and pay",
+			"name": "Edit order",
 			"event": [
 				{
 					"listen": "test",
@@ -444,6 +466,69 @@
 						{
 							"key": "nfts",
 							"value": "d30d016c-92a9-48c2-8086-d376d5cbe257",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://{{host}}/api/v1/orders/1",
+					"protocol": "https",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"orders",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Make order and clear",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept": true
+				}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					},
+					{
+						"key": "X-Practicum-Mobile-Token",
+						"value": "{{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "nfts",
+							"value": "d6a02bd1-1255-46cd-815b-656174c1d9c0",
 							"type": "text"
 						}
 					]
@@ -554,8 +639,13 @@
 					"mode": "urlencoded",
 					"urlencoded": [
 						{
-							"key": "likes",
-							"value": "d30d016c-92a9-48c2-8086-d376d5cbe257",
+							"key": "name",
+							"value": "Студентус Практикумс",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "Разработчик FakeNFT",
 							"type": "text"
 						},
 						{
@@ -564,8 +654,13 @@
 							"type": "text"
 						},
 						{
-							"key": "name",
-							"value": "Студентус Практикумс",
+							"key": "website",
+							"value": "https://practicum.yandex.ru",
+							"type": "text"
+						},
+						{
+							"key": "likes",
+							"value": "d30d016c-92a9-48c2-8086-d376d5cbe257",
 							"type": "text"
 						}
 					]
@@ -637,6 +732,11 @@
 						{
 							"key": "size",
 							"value": "3"
+						},
+						{
+							"key": "sortBy",
+							"value": "rating,desc",
+							"disabled": true
 						}
 					]
 				}
