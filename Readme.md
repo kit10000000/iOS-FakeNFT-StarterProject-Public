@@ -37,6 +37,9 @@ https://github.com/users/kit10000000/projects/1
 ## Скринкасты
 - Каталог:
 https://github.com/user-attachments/assets/1ea9b8e7-03a3-4223-b773-2f5908c14756
+- Корзина: 
+https://github.com/user-attachments/assets/85e1e84e-b491-4fae-9191-30985976aebb
+
 
 **Дополнительный (необязательный) функционал:**
 
